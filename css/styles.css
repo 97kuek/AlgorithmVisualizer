@@ -232,8 +232,9 @@ textarea.input {
   margin: 0 auto;
   background-color: #ffffff;
   position: relative;
-  /* 余白を与えても少しだけスタイルが見えるように padding を切り出し */
   padding: 4px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 .trellis-table th,
 .trellis-table td {
@@ -258,6 +259,16 @@ textarea.input {
   background-position: 0 0, 6px 6px;
   pointer-events: none;
   z-index: 1;
+}
+/* セルに (t,j) インデックスを表示 */
+.trellis-table td::after {
+  content: "(" attr(data-time) "," attr(data-state) ")";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 0.7rem;
+  color: #495670;
+  z-index: 3;
 }
 
 .trellis-table td:hover {
@@ -310,7 +321,7 @@ textarea.input {
   top: 6px;
   left: 6px;
   font-size: 0.8rem;
-  z-index: 3;
+  z-index: 4;
   color: #112d4e;
 }
 
@@ -319,6 +330,9 @@ textarea.input {
   border-collapse: collapse;
   margin: 16px auto 24px auto;
   width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 .simplex-table th,
 .simplex-table td {
@@ -335,8 +349,6 @@ textarea.input {
   color: #334e68;
   font-weight: 600;
 }
-
-/* テーブル内セルのホバーエフェクト */
 .simplex-table td:hover {
   background-color: #edf2f7;
 }

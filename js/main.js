@@ -396,6 +396,7 @@ let editSteps     = [], knapSteps    = [], sortSteps     = [], searchSteps    = 
 let forwardSteps  = [], viterbiSteps = [], lpSteps       = [], hashSteps      = [];
 let currentIndex  = -1;
 let autoTimer     = null;
+let hashTableState = [];
 
 // -------------------------------------------------
 // アルゴリズム選択時の表示制御
@@ -441,7 +442,7 @@ function generateEditDistanceSteps(s1, s2) {
   // dp[0][0] = 0
   dp[0][0] = 0;
   steps.push({
-    type: 'cell', i: 0, j: 0, value: 0,
+    type: 'cell', i: 0, j: 0, value: '0',
     message: `dp[0][0] = 0 に初期化。空文字→空文字なので操作不要です。`
   });
 
@@ -449,14 +450,14 @@ function generateEditDistanceSteps(s1, s2) {
   for (let i = 1; i <= n; i++) {
     dp[i][0] = i;
     steps.push({
-      type: 'cell', i: i, j: 0, value: dp[i][0],
+      type: 'cell', i: i, j: 0, value: dp[i][0].toString(),
       message: `dp[${i}][0] = ${i} に設定（削除コスト）。「${s1[i-1]}」を削除して空文字にする操作が ${i} 回。`
     });
   }
   for (let j = 1; j <= m; j++) {
     dp[0][j] = j;
     steps.push({
-      type: 'cell', i: 0, j: j, value: dp[0][j],
+      type: 'cell', i: 0, j: j, value: dp[0][j].toString(),
       message: `dp[0][${j}] = ${j} に設定（挿入コスト）。空文字→「${s2[j-1]}」を挿入し続ける操作が ${j} 回。`
     });
   }
@@ -573,7 +574,7 @@ function generateKnapsackSteps(weights, values, capacity) {
   for (let j = 0; j <= W; j++) {
     dp[0][j] = 0;
     steps.push({
-      type: 'cell', i: 0, j: j, value: 0,
+      type: 'cell', i: 0, j: j, value: '0',
       message: `品物0個で容量${j}なら価値0。`
     });
   }
@@ -584,7 +585,7 @@ function generateKnapsackSteps(weights, values, capacity) {
       if (weights[i - 1] > j) {
         dp[i][j] = dp[i - 1][j];
         steps.push({
-          type: 'cell', i: i, j: j, value: dp[i][j],
+          type: 'cell', i: i, j: j, value: dp[i][j].toString(),
           message: `品物 ${i} (重さ=${weights[i - 1]}) は容量${j}に入らない → dp[${i}][${j}] = ${dp[i - 1][j]}`
         });
       } else {
@@ -593,7 +594,7 @@ function generateKnapsackSteps(weights, values, capacity) {
         if (withoutItem >= withItem) {
           dp[i][j] = withoutItem;
           steps.push({
-            type: 'cell', i: i, j: j, value: dp[i][j],
+            type: 'cell', i: i, j: j, value: dp[i][j].toString(),
             message:
               `品物 ${i} (重${weights[i - 1]}, 価値${values[i - 1]}) を入れない場合 = ${withoutItem}\n` +
               `入れる場合 = ${withItem}\n→ 最大値 ${withoutItem} を dp[${i}][${j}] に設定。`
@@ -601,7 +602,7 @@ function generateKnapsackSteps(weights, values, capacity) {
         } else {
           dp[i][j] = withItem;
           steps.push({
-            type: 'cell', i: i, j: j, value: dp[i][j],
+            type: 'cell', i: i, j: j, value: dp[i][j].toString(),
             message:
               `品物 ${i} (重${weights[i - 1]}, 価値${values[i - 1]}) を入れる場合 = ${withItem}\n→ dp[${i}][${j}] = ${withItem}`
           });
@@ -661,8 +662,8 @@ knapInitBtn.addEventListener('click', () => {
         cell.textContent = '';
       }
       if (r === 0 && c === 0) cell.textContent = '';
-      else if (r === 0 && c >= 2) cell.textContent = c - 1;
-      else if (c === 0 && r >= 2) cell.textContent = r - 1;
+      else if (r === 0 && c >= 2) cell.textContent = (c - 1).toString();
+      else if (c === 0 && r >= 2) cell.textContent = (r - 1).toString();
       else if ((r === 0 && c === 1) || (r === 1 && c === 0)) cell.textContent = '';
       tr.appendChild(cell);
     }
@@ -960,7 +961,6 @@ sortInitBtn.addEventListener('click', () => {
       sortSteps = generateMergeSortSteps(arr);
       break;
     case 'insert':
-      // 挿入ソートステップ生成
       sortSteps = generateInsertionSortSteps(arr);
       break;
     case 'select':
@@ -1293,7 +1293,7 @@ searchRandomBtn.addEventListener('click', () => {
  * @param {number[]} pi
  * @param {number[][]} A
  * @param {number[][]} B
- * @returns {Object} { steps: Array, alphaMatrix: Array }
+ * @returns {Array} ステップリスト
  */
 function generateForwardSteps(states, observations, pi, A, B) {
   const N = states.length;
@@ -1408,6 +1408,9 @@ fwdInitBtn.addEventListener('click', () => {
     for (let t = 0; t < T; t++) {
       const td = document.createElement('td');
       td.id = `fwd-cell-${t}-${i}`;
+      // ★ インデックス表示用属性をセット
+      td.setAttribute('data-time', t.toString());
+      td.setAttribute('data-state', i.toString());
       tr.appendChild(td);
     }
     tbody.appendChild(tr);
@@ -1623,6 +1626,9 @@ vitInitBtn.addEventListener('click', () => {
     for (let t = 0; t < T; t++) {
       const td = document.createElement('td');
       td.id = `vit-cell-${t}-${i}`;
+      // ★ インデックス表示用属性をセット
+      td.setAttribute('data-time', t.toString());
+      td.setAttribute('data-state', i.toString());
       tr.appendChild(td);
     }
     tbody.appendChild(tr);
@@ -1987,9 +1993,7 @@ function renderStep() {
     slot.classList.remove('highlight', 'confirmed', 'empty');
     if (slot.textContent === '') slot.classList.add('empty');
   });
-  while (simplexTable.firstChild && false) {
-    // シンプル表は再描画しない (ステップ時に一度のみ構築)
-  }
+  // simplexTable はステップ中に再描画しない
 
   // ■ Edit Distance
   if (editControls.style.display === 'block') {
