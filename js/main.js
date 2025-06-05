@@ -114,25 +114,44 @@ function clearAutoPlay() {
   });
 }
 
-/** Auto Play をトグル（再生／一時停止）する */
+/**
+ * Auto Play をトグル（再生／一時停止）する
+ * 「倍率」をもとに間隔 (ms) を算出： baseInterval (1000ms) ÷ 倍率
+ */
 function toggleAutoPlay() {
-  let interval, autoBtn;
+  let interval, autoBtn, speedSelect;
   if (editControls.style.display === 'block') {
-    interval = editInterval; autoBtn = editAutoBtn;
+    speedSelect = parseFloat(editSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = editAutoBtn;
   } else if (knapControls.style.display === 'block') {
-    interval = knapInterval; autoBtn = knapAutoBtn;
+    speedSelect = parseFloat(knapSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = knapAutoBtn;
   } else if (sortControls.style.display === 'block') {
-    interval = sortInterval; autoBtn = sortAutoBtn;
+    speedSelect = parseFloat(sortSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = sortAutoBtn;
   } else if (searchControls.style.display === 'block') {
-    interval = searchInterval; autoBtn = searchAutoBtn;
+    speedSelect = parseFloat(searchSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = searchAutoBtn;
   } else if (forwardControls.style.display === 'block') {
-    interval = fwdInterval; autoBtn = fwdAutoBtn;
+    speedSelect = parseFloat(fwdSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = fwdAutoBtn;
   } else if (viterbiControls.style.display === 'block') {
-    interval = vitInterval; autoBtn = vitAutoBtn;
+    speedSelect = parseFloat(vitSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = vitAutoBtn;
   } else if (lpControls.style.display === 'block') {
-    interval = lpInterval; autoBtn = lpAutoBtn;
+    speedSelect = parseFloat(lpSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = lpAutoBtn;
   } else if (hashControls.style.display === 'block') {
-    interval = hashInterval; autoBtn = hashAutoBtn;
+    speedSelect = parseFloat(hashSpeedSelect.value);
+    interval = Math.floor(1000 / speedSelect);
+    autoBtn = hashAutoBtn;
   } else {
     return;
   }
@@ -186,8 +205,7 @@ const editTable         = document.getElementById('editTable');
 const editDesc          = document.getElementById('editDesc');
 const editS1Input       = document.getElementById('edit_s1');
 const editS2Input       = document.getElementById('edit_s2');
-const editSpeedSlider   = document.getElementById('editSpeedSlider');
-const editSpeedLabel    = document.getElementById('editSpeedLabel');
+const editSpeedSelect   = document.getElementById('editSpeedSelect');
 const editProgress      = document.getElementById('editProgress');
 
 /** 2) 0/1 Knapsack */
@@ -202,8 +220,7 @@ const knapDesc          = document.getElementById('knapDesc');
 const knapWeightsInput  = document.getElementById('knap_weights');
 const knapValuesInput   = document.getElementById('knap_values');
 const knapCapacityInput = document.getElementById('knap_capacity');
-const knapSpeedSlider   = document.getElementById('knapSpeedSlider');
-const knapSpeedLabel    = document.getElementById('knapSpeedLabel');
+const knapSpeedSelect   = document.getElementById('knapSpeedSelect');
 const knapProgress      = document.getElementById('knapProgress');
 
 /** 3) Sorting */
@@ -217,8 +234,7 @@ const sortBars          = document.getElementById('sortBars');
 const sortDesc          = document.getElementById('sortDesc');
 const sortArrayInput    = document.getElementById('sort_array');
 const sortAlgoSelect    = document.getElementById('sortAlgoSelect');
-const sortSpeedSlider   = document.getElementById('sortSpeedSlider');
-const sortSpeedLabel    = document.getElementById('sortSpeedLabel');
+const sortSpeedSelect   = document.getElementById('sortSpeedSelect');
 const sortProgress      = document.getElementById('sortProgress');
 
 /** 4) Searching */
@@ -233,8 +249,7 @@ const searchDesc         = document.getElementById('searchDesc');
 const searchArrayInput   = document.getElementById('search_array');
 const searchKeyInput     = document.getElementById('search_key');
 const searchAlgoSelect   = document.getElementById('searchAlgoSelect');
-const searchSpeedSlider  = document.getElementById('searchSpeedSlider');
-const searchSpeedLabel   = document.getElementById('searchSpeedLabel');
+const searchSpeedSelect  = document.getElementById('searchSpeedSelect');
 const searchProgress     = document.getElementById('searchProgress');
 
 /** 5) Forward アルゴリズム */
@@ -245,13 +260,13 @@ const fwdPiInput         = document.getElementById('fwd_pi');
 const fwdAInput          = document.getElementById('fwd_A');
 const fwdBInput          = document.getElementById('fwd_B');
 const fwdInitBtn         = document.getElementById('fwdInitBtn');
+const fwdRandomBtn       = document.getElementById('fwdRandomBtn');
 const fwdTable           = document.getElementById('fwdTable');
 const fwdDesc            = document.getElementById('fwdDesc');
 const fwdPrevBtn         = document.getElementById('fwdPrevBtn');
 const fwdNextBtn         = document.getElementById('fwdNextBtn');
 const fwdAutoBtn         = document.getElementById('fwdAutoBtn');
-const fwdSpeedSlider     = document.getElementById('fwdSpeedSlider');
-const fwdSpeedLabel      = document.getElementById('fwdSpeedLabel');
+const fwdSpeedSelect     = document.getElementById('fwdSpeedSelect');
 const fwdProgress        = document.getElementById('fwdProgress');
 
 /** 6) Viterbi アルゴリズム */
@@ -262,13 +277,13 @@ const vitPiInput         = document.getElementById('vit_pi');
 const vitAInput          = document.getElementById('vit_A');
 const vitBInput          = document.getElementById('vit_B');
 const vitInitBtn         = document.getElementById('vitInitBtn');
+const vitRandomBtn       = document.getElementById('vitRandomBtn');
 const vitTable           = document.getElementById('vitTable');
 const vitDesc            = document.getElementById('vitDesc');
 const vitPrevBtn         = document.getElementById('vitPrevBtn');
 const vitNextBtn         = document.getElementById('vitNextBtn');
 const vitAutoBtn         = document.getElementById('vitAutoBtn');
-const vitSpeedSlider     = document.getElementById('vitSpeedSlider');
-const vitSpeedLabel      = document.getElementById('vitSpeedLabel');
+const vitSpeedSelect     = document.getElementById('vitSpeedSelect');
 const vitProgress        = document.getElementById('vitProgress');
 
 /** 7) 線形計画法（単純形法） */
@@ -280,6 +295,7 @@ const lpPrevBtn          = document.getElementById('lpPrevBtn');
 const lpNextBtn          = document.getElementById('lpNextBtn');
 const lpAutoBtn          = document.getElementById('lpAutoBtn');
 const simplexTable       = document.getElementById('simplexTable');
+const lpSpeedSelect      = document.getElementById('lpSpeedSelect');
 const lpProgress         = document.getElementById('lpProgress');
 const lpDesc             = document.getElementById('lpDesc');
 
@@ -293,6 +309,7 @@ const hashPrevBtn        = document.getElementById('hashPrevBtn');
 const hashNextBtn        = document.getElementById('hashNextBtn');
 const hashAutoBtn        = document.getElementById('hashAutoBtn');
 const hashContainer      = document.getElementById('hashContainer');
+const hashSpeedSelect    = document.getElementById('hashSpeedSelect');
 const hashProgress       = document.getElementById('hashProgress');
 const hashDesc           = document.getElementById('hashDesc');
 
@@ -300,11 +317,9 @@ const hashDesc           = document.getElementById('hashDesc');
 // アルゴリズム用ステップ配列・現在インデックス・自動再生タイマー
 // -------------------------------------------------
 let steps = [], currentIndex = -1, autoTimer = null;
-let editInterval   = 1000, knapInterval   = 1000;
-let sortInterval   = 1000, searchInterval = 1000;
-let fwdInterval    = 1000, vitInterval    = 1000;
-let lpInterval     = 1000, hashInterval   = 1000;
-let hashTableState = [];
+
+// Base interval は 1000ms とし、選択された倍率で割って使用する
+const BASE_INTERVAL = 1000;
 
 // -------------------------------------------------
 // アルゴリズム選択時に各セクションを表示／非表示
@@ -328,35 +343,6 @@ algoSelect.addEventListener('change', () => {
   else if (val === 'lp')      lpControls.style.display = 'block';
   else if (val === 'hash')    hashControls.style.display = 'block';
 });
-
-// -------------------------------------------------
-// スライダー操作で自動再生速度を変更
-// -------------------------------------------------
-editSpeedSlider.addEventListener('input', () => {
-  editInterval = parseFloat(editSpeedSlider.value) * 1000;
-  editSpeedLabel.textContent = editSpeedSlider.value;
-});
-knapSpeedSlider.addEventListener('input', () => {
-  knapInterval = parseFloat(knapSpeedSlider.value) * 1000;
-  knapSpeedLabel.textContent = knapSpeedSlider.value;
-});
-sortSpeedSlider.addEventListener('input', () => {
-  sortInterval = parseFloat(sortSpeedSlider.value) * 1000;
-  sortSpeedLabel.textContent = sortSpeedSlider.value;
-});
-searchSpeedSlider.addEventListener('input', () => {
-  searchInterval = parseFloat(searchSpeedSlider.value) * 1000;
-  searchSpeedLabel.textContent = searchSpeedSlider.value;
-});
-fwdSpeedSlider.addEventListener('input', () => {
-  fwdInterval = parseFloat(fwdSpeedSlider.value) * 1000;
-  fwdSpeedLabel.textContent = fwdSpeedSlider.value;
-});
-vitSpeedSlider.addEventListener('input', () => {
-  vitInterval = parseFloat(vitSpeedSlider.value) * 1000;
-  vitSpeedLabel.textContent = vitSpeedSlider.value;
-});
-// lp, hash のスライダーがあれば同様に
 
 // =================================================
 // 1) Edit Distance（レーベンシュタイン距離）可視化
@@ -497,7 +483,7 @@ function generateKnapsackSteps(weights, values, capacity) {
         dp[i][j] = dp[i - 1][j];
         tableSteps.push({
           type: 'cell', i: i, j: j, value: dp[i][j],
-          message: `品物 ${i}（重さ=${weights[i - 1]}）は容量${j}に入らないので dp[${i}][${j}] = ${dp[i - 1][j]}`
+          message: `品物 ${i}（重さ=${weights[i - 1]}）は容量${j}に入らない → dp[${i}][${j}] = ${dp[i - 1][j]}`
         });
       } else {
         const withoutItem = dp[i - 1][j];
@@ -507,15 +493,15 @@ function generateKnapsackSteps(weights, values, capacity) {
           tableSteps.push({
             type: 'cell', i: i, j: j, value: dp[i][j],
             message:
-              `品物 ${i} (重さ=${weights[i - 1]}, 価値=${values[i - 1]}) を入れない場合の価値 = ${withoutItem}\n` +
-              `入れる場合の価値 = ${withItem}\n→ ${withoutItem} のほうが大きいので dp[${i}][${j}] = ${withoutItem}`
+              `品物 ${i} (重${weights[i - 1]}, 価値${values[i - 1]}) を入れない場合 = ${withoutItem}\n` +
+              `入れる場合 = ${withItem}\n→ ${withoutItem} の方が大きいので dp[${i}][${j}] = ${withoutItem}`
           });
         } else {
           dp[i][j] = withItem;
           tableSteps.push({
             type: 'cell', i: i, j: j, value: dp[i][j],
             message:
-              `品物 ${i} (重さ=${weights[i - 1]}, 価値=${values[i - 1]}) を入れる場合の価値 = ${withItem}\n→ dp[${i}][${j}] = ${withItem}`
+              `品物 ${i} (重${weights[i - 1]}, 価値${values[i - 1]}) を入れる場合 = ${withItem}\n→ dp[${i}][${j}] = ${withItem}`
           });
         }
       }
@@ -794,9 +780,7 @@ sortInitBtn.addEventListener('click', () => {
     case 'bubble': steps = generateBubbleSortSteps(arr);   break;
     case 'quick':  steps = generateQuickSortSteps(arr);    break;
     case 'merge':  steps = generateMergeSortSteps(arr);    break;
-    case 'insert': steps = generateInsertionSortSteps(arr);break;
-    case 'select': steps = generateSelectionSortSteps(arr);break;
-    default:       steps = [];
+    default:       steps = generateBubbleSortSteps(arr);   break;
   }
   currentIndex = 0;
   if (steps.length > 0 && steps[0].row) {
@@ -818,7 +802,7 @@ sortRandomBtn.addEventListener('click', () => {
 });
 
 // =================================================
-// 4) Searching（線形／2分／番兵法）
+// 4) Searching（線形探索／2分探索／番兵法）
 // =================================================
 function generateLinearSearchSteps(arrInput, key) {
   const arr = arrInput.slice();
@@ -1091,7 +1075,7 @@ fwdInitBtn.addEventListener('click', () => {
     for (let t = 0; t < T; t++) {
       const td = document.createElement('td');
       td.id = `fwdTable-cell-${t}-${i}`;
-      td.textContent = ''; 
+      td.textContent = '';
       tr.appendChild(td);
     }
     tbody.appendChild(tr);
@@ -1099,6 +1083,62 @@ fwdInitBtn.addEventListener('click', () => {
   fwdTable.appendChild(tbody);
 
   renderStep();
+});
+
+// ランダム生成（Forward）
+fwdRandomBtn.addEventListener('click', () => {
+  // ランダムな HMM を生成：状態数 2～4、観測系列長 3～6
+  const N = Math.floor(Math.random() * 3) + 2; // 2..4
+  const T = Math.floor(Math.random() * 4) + 3; // 3..6
+  // 状態名
+  const states = [];
+  for (let i = 0; i < N; i++) states.push(`S${i}`);
+  fwdStatesInput.value = states.join(',');
+  // 観測記号は 'o0','o1',... ランダムに選ぶ長さ T
+  const observations = [];
+  for (let t = 0; t < T; t++) observations.push(`o${t}`);
+  fwdObsInput.value = observations.join(',');
+  // π はランダム確率（合計1に正規化）
+  let sumPi = 0;
+  const piArr = [];
+  for (let i = 0; i < N; i++) {
+    const val = Math.random();
+    piArr.push(val);
+    sumPi += val;
+  }
+  for (let i = 0; i < N; i++) piArr[i] = +(piArr[i] / sumPi).toFixed(3);
+  fwdPiInput.value = piArr.join(',');
+
+  // A, B 行列をランダム生成し、正規化してテキストに反映
+  // A: N×N、各行正規化
+  const Arows = [];
+  for (let i = 0; i < N; i++) {
+    let rowSum = 0;
+    const row = [];
+    for (let j = 0; j < N; j++) {
+      const val = Math.random();
+      row.push(val);
+      rowSum += val;
+    }
+    for (let j = 0; j < N; j++) row[j] = +(row[j] / rowSum).toFixed(3);
+    Arows.push(row);
+  }
+  fwdAInput.value = Arows.map(r => r.join(',')).join('\n');
+
+  // B: N×T、各行正規化
+  const BrowsArr = [];
+  for (let i = 0; i < N; i++) {
+    let rowSum = 0;
+    const row = [];
+    for (let t = 0; t < T; t++) {
+      const val = Math.random();
+      row.push(val);
+      rowSum += val;
+    }
+    for (let t = 0; t < T; t++) row[t] = +(row[t] / rowSum).toFixed(3);
+    BrowsArr.push(row);
+  }
+  fwdBInput.value = BrowsArr.map(r => r.join(',')).join('\n');
 });
 
 // =================================================
@@ -1181,7 +1221,7 @@ function generateViterbiSteps(states, observations, pi, A, B) {
   }
   steps.push({
     type: 'end',
-    message: `計算完了！ 最尤経路の終端は状態=${states[finalState]} (確率=${finalMax.toFixed(5)})`
+    message: `計算完了！ 最尤終端は状態=${states[finalState]} (確率=${finalMax.toFixed(5)})`
   });
   return { steps, deltaMatrix: delta, psiMatrix: psi };
 }
@@ -1244,6 +1284,62 @@ vitInitBtn.addEventListener('click', () => {
   vitTable.appendChild(tbody);
 
   renderStep();
+});
+
+// ランダム生成（Viterbi）
+vitRandomBtn.addEventListener('click', () => {
+  // ランダムな HMM を生成：状態数 2～4、観測系列長 3～6
+  const N = Math.floor(Math.random() * 3) + 2; // 2..4
+  const T = Math.floor(Math.random() * 4) + 3; // 3..6
+  // 状態名
+  const states = [];
+  for (let i = 0; i < N; i++) states.push(`S${i}`);
+  vitStatesInput.value = states.join(',');
+  // 観測記号は 'o0','o1',... ランダムに選ぶ長さ T
+  const observations = [];
+  for (let t = 0; t < T; t++) observations.push(`o${t}`);
+  vitObsInput.value = observations.join(',');
+  // π はランダム確率（合計1に正規化）
+  let sumPi = 0;
+  const piArr = [];
+  for (let i = 0; i < N; i++) {
+    const val = Math.random();
+    piArr.push(val);
+    sumPi += val;
+  }
+  for (let i = 0; i < N; i++) piArr[i] = +(piArr[i] / sumPi).toFixed(3);
+  vitPiInput.value = piArr.join(',');
+
+  // A, B 行列をランダム生成し、正規化してテキストに反映
+  // A: N×N、各行正規化
+  const Arows = [];
+  for (let i = 0; i < N; i++) {
+    let rowSum = 0;
+    const row = [];
+    for (let j = 0; j < N; j++) {
+      const val = Math.random();
+      row.push(val);
+      rowSum += val;
+    }
+    for (let j = 0; j < N; j++) row[j] = +(row[j] / rowSum).toFixed(3);
+    Arows.push(row);
+  }
+  vitAInput.value = Arows.map(r => r.join(',')).join('\n');
+
+  // B: N×T、各行正規化
+  const BrowsArr = [];
+  for (let i = 0; i < N; i++) {
+    let rowSum = 0;
+    const row = [];
+    for (let t = 0; t < T; t++) {
+      const val = Math.random();
+      row.push(val);
+      rowSum += val;
+    }
+    for (let t = 0; t < T; t++) row[t] = +(row[t] / rowSum).toFixed(3);
+    BrowsArr.push(row);
+  }
+  vitBInput.value = BrowsArr.map(r => r.join(',')).join('\n');
 });
 
 // =================================================
@@ -1562,7 +1658,7 @@ function renderStep() {
   // 6) Viterbi アルゴリズム
   else if (viterbiControls.style.display === 'block') {
     if (step.type === 'compare') {
-      // 比較ステップはセルのハイライトではなく、メッセージのみ更新
+      // 比較ステップはメッセージのみ更新
       vitDesc.textContent = step.message;
     } else if (step.type === 'cell') {
       const cell = document.getElementById(`vitTable-cell-${step.t}-${step.i}`);
@@ -1580,7 +1676,6 @@ function renderStep() {
   else if (lpControls.style.display === 'block') {
     if (step.type === 'table') {
       lpDesc.textContent = step.message;
-      // テーブルはすでに表示済み
     } else if (step.type === 'end') {
       lpDesc.textContent = step.message;
     }

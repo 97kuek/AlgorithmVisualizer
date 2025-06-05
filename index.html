@@ -2,16 +2,16 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>アルゴリズム可視化ツール（スーパー強化版）</title>
+  <title>AlgorithmVisualizer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- 外部CSS を読み込む -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="header">
-    アルゴリズム可視化ツール（スーパー強化版）<br>
+    AlgorithmVisualizer<br>
     <span class="subtitle">
-      ソート・探索・HMM（フォワード／ビタビ）・線形計画・ハッシュ法 ＋ ランダム生成＆色の凡例
+      情報系学生のためのアルゴリズム可視化ツール
     </span>
   </header>
 
@@ -73,11 +73,15 @@
 
       <div class="controls">
         <label class="label">
-          Auto Play 速度：
-          <span id="editSpeedLabel">1.0</span> 秒
+          Auto Play 倍率：
+          <select id="editSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
         </label>
-        <input type="range" id="editSpeedSlider" class="slider"
-               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="editPrevBtn" class="btn" disabled>前へ</button>
@@ -88,7 +92,47 @@
       <div id="editDesc" class="description">
         <strong>編集距離（Edit Distance）とは：</strong><br>
         文字列 A を B に変換するとき、挿入・削除・置換の操作を最小何回行えばよいかを求めるアルゴリズムです。<br>
-        DP テーブルを使って、ステップごとにどのように値が埋まるかを可視化します。
+        DP テーブルを使って、ステップごとにどのように値が埋まるかを可視化します。<br>
+        下記に C 言語での実装例を示します。
+        <pre><code>
+// C 言語での Edit Distance（レーベンシュタイン距離）の例
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAXLEN 100
+
+int min3(int a, int b, int c) {
+    int m = a < b ? a : b;
+    return m < c ? m : c;
+}
+
+int edit_distance(const char *s1, const char *s2) {
+    int n = strlen(s1), m = strlen(s2);
+    int dp[MAXLEN+1][MAXLEN+1];
+    for (int i = 0; i <= n; i++) dp[i][0] = i;
+    for (int j = 0; j <= m; j++) dp[0][j] = j;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            int cost = (s1[i-1] == s2[j-1]) ? 0 : 1;
+            dp[i][j] = min3(dp[i-1][j] + 1,
+                            dp[i][j-1] + 1,
+                            dp[i-1][j-1] + cost);
+        }
+    }
+    return dp[n][m];
+}
+
+int main() {
+    char s1[MAXLEN+1], s2[MAXLEN+1];
+    printf("文字列 s1 を入力: ");
+    scanf("%s", s1);
+    printf("文字列 s2 を入力: ");
+    scanf("%s", s2);
+    int dist = edit_distance(s1, s2);
+    printf("編集距離: %d\n", dist);
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
 
@@ -99,16 +143,13 @@
       <h2 class="section-title">0/1 Knapsack</h2>
       <div class="controls">
         <label class="label">重みリスト（カンマ区切り）：
-          <input type="text" id="knap_weights" class="input"
-                 placeholder="例: 2,3,4,5" />
+          <input type="text" id="knap_weights" class="input" placeholder="例: 2,3,4,5" />
         </label>
         <label class="label">価値リスト（カンマ区切り）：
-          <input type="text" id="knap_values" class="input"
-                 placeholder="例: 3,4,5,6" />
+          <input type="text" id="knap_values" class="input" placeholder="例: 3,4,5,6" />
         </label>
         <label class="label">容量 (capacity)：
-          <input type="number" id="knap_capacity" class="input"
-                 placeholder="例: 8" />
+          <input type="number" id="knap_capacity" class="input" placeholder="例: 8" />
         </label>
         <button id="knapInitBtn" class="btn">Initialize</button>
         <button id="knapRandomBtn" class="btn">ランダム生成</button>
@@ -120,11 +161,15 @@
 
       <div class="controls">
         <label class="label">
-          Auto Play 速度：
-          <span id="knapSpeedLabel">1.0</span> 秒
+          Auto Play 倍率：
+          <select id="knapSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
         </label>
-        <input type="range" id="knapSpeedSlider" class="slider"
-               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="knapPrevBtn" class="btn" disabled>前へ</button>
@@ -136,7 +181,39 @@
         <strong>0/1 Knapsack とは：</strong><br>
         限られた重さのキャパシティの中で、価値を最大化する問題です。<br>
         各品物は「重み」「価値」を持ち、選ぶ（1）・選ばない（0）の組み合わせを決めます。<br>
-        DP テーブルを可視化し、「入れる場合」「入れない場合」の価値を比較します。
+        DP テーブルを可視化し、「入れる場合」「入れない場合」の価値を比較します。<br>
+        以下は C 言語での実装例です。
+        <pre><code>
+// C 言語での 0/1 Knapsack の例
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b) { return (a > b) ? a : b; }
+
+int knapsack(int W, int wt[], int val[], int n) {
+    int dp[n+1][W+1];
+    for (int i = 0; i <= n; i++) {
+        for (int w = 0; w <= W; w++) {
+            if (i == 0 || w == 0) dp[i][w] = 0;
+            else if (wt[i-1] <= w)
+                dp[i][w] = max(val[i-1] + dp[i-1][w - wt[i-1]],
+                               dp[i-1][w]);
+            else
+                dp[i][w] = dp[i-1][w];
+        }
+    }
+    return dp[n][W];
+}
+
+int main() {
+    int val[] = {3, 4, 5, 6};
+    int wt[]  = {2, 3, 4, 5};
+    int W = 8;
+    int n = sizeof(val) / sizeof(val[0]);
+    printf("最大価値: %d\n", knapsack(W, wt, val, n));
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
 
@@ -156,8 +233,7 @@
           </select>
         </label>
         <label class="label">ソート対象リスト：
-          <input type="text" id="sort_array" class="input"
-                 placeholder="例: 5,2,9,1,5" />
+          <input type="text" id="sort_array" class="input" placeholder="例: 5,2,9,1,5" />
         </label>
         <button id="sortInitBtn" class="btn">Initialize</button>
         <button id="sortRandomBtn" class="btn">ランダム生成</button>
@@ -167,11 +243,15 @@
 
       <div class="controls">
         <label class="label">
-          Auto Play 速度：
-          <span id="sortSpeedLabel">1.0</span> 秒
+          Auto Play 倍率：
+          <select id="sortSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
         </label>
-        <input type="range" id="sortSpeedSlider" class="slider"
-               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="sortPrevBtn" class="btn" disabled>前へ</button>
@@ -182,14 +262,157 @@
       <div id="sortDesc" class="description">
         <strong>Sorting とは：</strong><br>
         配列を昇順（小さい順）に並び替える操作です。<br>
-        さまざまな手法をバー表示でステップごとに可視化します：
-        <ul>
-          <li>バブルソート</li>
-          <li>クイックソート</li>
-          <li>マージソート</li>
-          <li>挿入ソート</li>
-          <li>選択ソート</li>
-        </ul>
+        下記に C 言語での代表的なソートアルゴリズムの実装例を示します。
+
+        <strong>■ バブルソート (Bubble Sort)</strong>
+        <pre><code>
+// C 言語：バブルソートの例
+#include <stdio.h>
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (arr[j] > arr[j+1]) {
+                int tmp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = tmp;
+            }
+        }
+    }
+}
+int main() {
+    int arr[] = {5,2,9,1,5};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    bubbleSort(arr, n);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+        </code></pre>
+
+        <strong>■ クイックソート (Quick Sort)</strong>
+        <pre><code>
+// C 言語：クイックソートの例
+#include <stdio.h>
+int partition(int a[], int low, int high) {
+    int pivot = a[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (a[j] < pivot) {
+            i++;
+            int tmp = a[i];
+            a[i] = a[j];
+            a[j] = tmp;
+        }
+    }
+    int tmp = a[i+1];
+    a[i+1] = a[high];
+    a[high] = tmp;
+    return i + 1;
+}
+void quickSort(int a[], int low, int high) {
+    if (low < high) {
+        int pi = partition(a, low, high);
+        quickSort(a, low, pi - 1);
+        quickSort(a, pi + 1, high);
+    }
+}
+int main() {
+    int arr[] = {5,2,9,1,5};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    quickSort(arr, 0, n-1);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+        </code></pre>
+
+        <strong>■ マージソート (Merge Sort)</strong>
+        <pre><code>
+// C 言語：マージソートの例
+#include <stdio.h>
+#include <stdlib.h>
+void merge(int a[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int *L = malloc(sizeof(int) * n1);
+    int *R = malloc(sizeof(int) * n2);
+    for (int i = 0; i < n1; i++) L[i] = a[l + i];
+    for (int j = 0; j < n2; j++) R[j] = a[m + 1 + j];
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) a[k++] = L[i++];
+        else           a[k++] = R[j++];
+    }
+    while (i < n1) a[k++] = L[i++];
+    while (j < n2) a[k++] = R[j++];
+    free(L); free(R);
+}
+void mergeSort(int a[], int l, int r) {
+    if (l < r) {
+        int m = (l + r) / 2;
+        mergeSort(a, l, m);
+        mergeSort(a, m + 1, r);
+        merge(a, l, m, r);
+    }
+}
+int main() {
+    int arr[] = {5,2,9,1,5};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    mergeSort(arr, 0, n-1);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+        </code></pre>
+
+        <strong>■ 挿入ソート (Insertion Sort)</strong>
+        <pre><code>
+// C 言語：挿入ソートの例
+#include <stdio.h>
+void insertionSort(int a[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = a[i];
+        int j = i - 1;
+        while (j >= 0 && a[j] > key) {
+            a[j + 1] = a[j];
+            j--;
+        }
+        a[j + 1] = key;
+    }
+}
+int main() {
+    int arr[] = {5,2,9,1,5};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    insertionSort(arr, n);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+        </code></pre>
+
+        <strong>■ 選択ソート (Selection Sort)</strong>
+        <pre><code>
+// C 言語：選択ソートの例
+#include <stdio.h>
+void selectionSort(int a[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (a[j] < a[minIdx]) minIdx = j;
+        }
+        int tmp = a[i];
+        a[i] = a[minIdx];
+        a[minIdx] = tmp;
+    }
+}
+int main() {
+    int arr[] = {5,2,9,1,5};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    selectionSort(arr, n);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
 
@@ -207,12 +430,10 @@
           </select>
         </label>
         <label class="label">探索対象リスト：
-          <input type="text" id="search_array" class="input"
-                 placeholder="例: 1,2,3,5,7,8" />
+          <input type="text" id="search_array" class="input" placeholder="例: 1,2,3,5,7,8" />
         </label>
         <label class="label">探索キー：
-          <input type="number" id="search_key" class="input"
-                 placeholder="例: 5" />
+          <input type="number" id="search_key" class="input" placeholder="例: 5" />
         </label>
         <button id="searchInitBtn" class="btn">Initialize</button>
         <button id="searchRandomBtn" class="btn">ランダム生成</button>
@@ -222,11 +443,15 @@
 
       <div class="controls">
         <label class="label">
-          Auto Play 速度：
-          <span id="searchSpeedLabel">1.0</span> 秒
+          Auto Play 倍率：
+          <select id="searchSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
         </label>
-        <input type="range" id="searchSpeedSlider" class="slider"
-               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="searchPrevBtn" class="btn" disabled>前へ</button>
@@ -236,13 +461,83 @@
       <div id="searchProgress" class="progress">ステップ 0 / 0</div>
       <div id="searchDesc" class="description">
         <strong>Searching とは：</strong><br>
-        配列から特定の値（キー）を見つける操作です：
+        配列から特定の値（キー）を見つける操作です。<br>
         <ul>
           <li>線形探索：先頭から順次チェック</li>
           <li>2分探索：あらかじめソート済み配列から中央を比較し範囲を半分に絞る</li>
           <li>番兵法：末尾に「番兵」を追加してループ条件をシンプルに</li>
         </ul>
-        バー表示を使って、各ステップでどの要素をチェックしているかを可視化します。        
+        下記に C 言語での実装例を示します。
+
+        <strong>■ 線形探索 (Linear Search)</strong>
+        <pre><code>
+// C 言語：線形探索の例
+#include <stdio.h>
+int linearSearch(int arr[], int n, int key) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == key) return i; // 見つかったインデックスを返す
+    }
+    return -1; // 見つからない場合
+}
+int main() {
+    int arr[] = {1,2,3,5,7,8};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int key = 5;
+    int idx = linearSearch(arr, n, key);
+    if (idx != -1) printf("キー %d はインデックス %d にあります。\n", key, idx);
+    else printf("キー %d は見つかりません。\n", key);
+    return 0;
+}
+        </code></pre>
+
+        <strong>■ 2分探索 (Binary Search)</strong>
+        <pre><code>
+// C 言語：2分探索の例（配列はソート済みであることが前提）
+#include <stdio.h>
+int binarySearch(int arr[], int n, int key) {
+    int left = 0, right = n - 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (arr[mid] == key) return mid;
+        else if (arr[mid] < key) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}
+int main() {
+    int arr[] = {1,2,3,5,7,8};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int key = 5;
+    int idx = binarySearch(arr, n, key);
+    if (idx != -1) printf("キー %d はインデックス %d にあります。\n", key, idx);
+    else printf("キー %d は見つかりません。\n", key);
+    return 0;
+}
+        </code></pre>
+
+        <strong>■ 番兵法 (Sentinel Search)</strong>
+        <pre><code>
+// C 言語：番兵法の例
+#include <stdio.h>
+int sentinelSearch(int arr[], int n, int key) {
+    int last = arr[n - 1];
+    arr[n - 1] = key; // 番兵を設定
+    int i = 0;
+    while (arr[i] != key) i++;
+    arr[n - 1] = last; // 元に戻す
+    if (i < n - 1 || arr[n - 1] == key) return i;
+    return -1;
+}
+int main() {
+    int arr[6] = {1,2,3,5,7,8};
+    int n = 6;
+    int key = 4;
+    int idx = sentinelSearch(arr, n, key);
+    if (idx != -1) printf("キー %d はインデックス %d にあります。\n", key, idx);
+    else printf("キー %d は見つかりません。\n", key);
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
 
@@ -253,18 +548,15 @@
       <h2 class="section-title">Forward アルゴリズム（HMM）</h2>
       <div class="controls">
         <label class="label">状態（カンマ区切り）：
-          <input type="text" id="fwd_states" class="input"
-                 placeholder="例: Rainy,Sunny" />
+          <input type="text" id="fwd_states" class="input" placeholder="例: Rainy,Sunny" />
         </label>
         <label class="label">観測系列（カンマ区切り）：
-          <input type="text" id="fwd_obs" class="input"
-                 placeholder="例: walk,shop,clean" />
+          <input type="text" id="fwd_obs" class="input" placeholder="例: walk,shop,clean" />
         </label>
       </div>
       <div class="controls">
         <label class="label">初期確率 π（コンマ区切り；状態順）：
-          <input type="text" id="fwd_pi" class="input"
-                 placeholder="例: 0.6,0.4" />
+          <input type="text" id="fwd_pi" class="input" placeholder="例: 0.6,0.4" />
         </label>
       </div>
       <div class="controls">
@@ -285,7 +577,7 @@
       </div>
       <div class="controls">
         <button id="fwdInitBtn" class="btn">Initialize</button>
-        <!-- ランダム生成は難しいので省略 -->
+        <button id="fwdRandomBtn" class="btn">ランダム生成</button>
       </div>
 
       <div id="fwdTableWrapper" class="table-wrapper">
@@ -294,11 +586,15 @@
 
       <div class="controls">
         <label class="label">
-          Auto Play 速度：
-          <span id="fwdSpeedLabel">1.0</span> 秒
+          Auto Play 倍率：
+          <select id="fwdSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
         </label>
-        <input type="range" id="fwdSpeedSlider" class="slider"
-               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="fwdPrevBtn" class="btn" disabled>前へ</button>
@@ -309,8 +605,64 @@
       <div id="fwdDesc" class="description">
         <strong>Forward アルゴリズムとは：</strong><br>
         HMM（隠れマルコフモデル）において、観測系列が与えられたとき、
-        すべての隠れ状態列の総和を効率的に計算し、観測系列の尤度を求める手法です。<br>
-        トレリス（時間×状態 の格子）を使い、ステップごとに確率を更新していきます。
+        観測系列の尤度を効率的に求める手法です。<br>
+        トレリス（時間×状態 の格子）を使い、ステップごとに確率を更新していきます。<br>
+        下記に C 言語での実装例を示します。
+
+        <pre><code>
+// C 言語：Forward アルゴリズムの例
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAXT 100
+#define MAXN 10
+
+double pi[MAXN];       // 初期確率
+double A[MAXN][MAXN];  // 遷移確率
+double B[MAXN][MAXT];  // 出力確率
+double alpha[MAXT][MAXN];
+
+int main() {
+    int N, T; // N: 状態数, T: 観測系列長
+    char states[MAXN][16];
+    char obs[MAXT][16];
+
+    // --- 入力省略：ここでは定数として与える例 ---
+    N = 2; T = 3;
+    strcpy(states[0], "Rainy"); strcpy(states[1], "Sunny");
+    strcpy(obs[0], "walk"); strcpy(obs[1], "shop"); strcpy(obs[2], "clean");
+    pi[0] = 0.6; pi[1] = 0.4;
+    A[0][0] = 0.7; A[0][1] = 0.3;
+    A[1][0] = 0.4; A[1][1] = 0.6;
+    // B[状態][観測インデックス]
+    double bRainy[] = {0.1,0.4,0.5};
+    double bSunny[] = {0.6,0.3,0.1};
+    memcpy(B[0], bRainy, sizeof(double)*3);
+    memcpy(B[1], bSunny, sizeof(double)*3);
+
+    // t=0 初期化
+    for (int i = 0; i < N; i++) {
+        alpha[0][i] = pi[i] * B[i][0]; // 観測 obs[0] のインデックスは例として 0 とする
+        printf("t=0, 状態 %s: alpha = %f\n", states[i], alpha[0][i]);
+    }
+    // t=1..T-1
+    for (int t = 1; t < T; t++) {
+        for (int j = 0; j < N; j++) {
+            double sum = 0.0;
+            for (int i = 0; i < N; i++) {
+                sum += alpha[t-1][i] * A[i][j];
+            }
+            alpha[t][j] = sum * B[j][t]; // 観測 obs[t] のインデックスは t としている
+            printf("t=%d, 状態 %s: alpha = %f\n", t, states[j], alpha[t][j]);
+        }
+    }
+    // 最終尤度
+    double prob = 0.0;
+    for (int i = 0; i < N; i++) prob += alpha[T-1][i];
+    printf("観測系列の尤度 = %f\n", prob);
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
 
@@ -321,18 +673,15 @@
       <h2 class="section-title">Viterbi アルゴリズム（HMM）</h2>
       <div class="controls">
         <label class="label">状態（カンマ区切り）：
-          <input type="text" id="vit_states" class="input"
-                 placeholder="例: Rainy,Sunny" />
+          <input type="text" id="vit_states" class="input" placeholder="例: Rainy,Sunny" />
         </label>
         <label class="label">観測系列（カンマ区切り）：
-          <input type="text" id="vit_obs" class="input"
-                 placeholder="例: walk,shop,clean" />
+          <input type="text" id="vit_obs" class="input" placeholder="例: walk,shop,clean" />
         </label>
       </div>
       <div class="controls">
         <label class="label">初期確率 π（コンマ区切り；状態順）：
-          <input type="text" id="vit_pi" class="input"
-                 placeholder="例: 0.6,0.4" />
+          <input type="text" id="vit_pi" class="input" placeholder="例: 0.6,0.4" />
         </label>
       </div>
       <div class="controls">
@@ -353,6 +702,7 @@
       </div>
       <div class="controls">
         <button id="vitInitBtn" class="btn">Initialize</button>
+        <button id="vitRandomBtn" class="btn">ランダム生成</button>
       </div>
 
       <div id="vitTableWrapper" class="table-wrapper">
@@ -361,11 +711,15 @@
 
       <div class="controls">
         <label class="label">
-          Auto Play 速度：
-          <span id="vitSpeedLabel">1.0</span> 秒
+          Auto Play 倍率：
+          <select id="vitSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
         </label>
-        <input type="range" id="vitSpeedSlider" class="slider"
-               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="vitPrevBtn" class="btn" disabled>前へ</button>
@@ -375,9 +729,79 @@
       <div id="vitProgress" class="progress">ステップ 0 / 0</div>
       <div id="vitDesc" class="description">
         <strong>Viterbi アルゴリズムとは：</strong><br>
-        HMM において、観測系列が与えられたとき、「最も尤もらしい（最大尤度の）隠れ状態列」を
-        動的に求める手法です。<br>
-        トレリス（時間×状態 の格子）を使い、ステップごとに最適経路とその確率を更新していきます。
+        HMM において、観測系列が与えられたとき、
+        「最も尤もらしい（最大尤度の）隠れ状態列」を求める手法です。<br>
+        トレリス（時間×状態 の格子）を使い、ステップごとに最適経路とその確率を更新していきます。<br>
+        下記に C 言語での実装例を示します。
+
+        <pre><code>
+// C 言語：Viterbi アルゴリズムの例
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAXT 100
+#define MAXN 10
+
+double pi[MAXN];       // 初期確率
+double A[MAXN][MAXN];  // 遷移確率
+double B[MAXN][MAXT];  // 出力確率
+double delta[MAXT][MAXN];
+int psi[MAXT][MAXN];
+
+int main() {
+    int N, T; // N: 状態数, T: 観測系列長
+    char states[MAXN][16];
+    char obs[MAXT][16];
+
+    // --- 入力省略：ここでは定数として与える例 ---
+    N = 2; T = 3;
+    strcpy(states[0], "Rainy"); strcpy(states[1], "Sunny");
+    strcpy(obs[0], "walk"); strcpy(obs[1], "shop"); strcpy(obs[2], "clean");
+    pi[0] = 0.6; pi[1] = 0.4;
+    A[0][0] = 0.7; A[0][1] = 0.3;
+    A[1][0] = 0.4; A[1][1] = 0.6;
+    double bRainy[] = {0.1,0.4,0.5};
+    double bSunny[] = {0.6,0.3,0.1};
+    memcpy(B[0], bRainy, sizeof(double)*3);
+    memcpy(B[1], bSunny, sizeof(double)*3);
+
+    // t=0 初期化
+    for (int i = 0; i < N; i++) {
+        delta[0][i] = pi[i] * B[i][0]; // 観測 obs[0] のインデックスは 0
+        psi[0][i] = 0;
+        printf("t=0, 状態 %s: delta = %f\n", states[i], delta[0][i]);
+    }
+    // t=1..T-1
+    for (int t = 1; t < T; t++) {
+        for (int j = 0; j < N; j++) {
+            double maxVal = -1.0;
+            int maxState = 0;
+            for (int i = 0; i < N; i++) {
+                double val = delta[t-1][i] * A[i][j];
+                if (val > maxVal) {
+                    maxVal = val;
+                    maxState = i;
+                }
+            }
+            delta[t][j] = maxVal * B[j][t]; // 観測 obs[t] のインデックスは t
+            psi[t][j] = maxState;
+            printf("t=%d, 状態 %s: delta = %f (prev=%s)\n",
+                   t, states[j], delta[t][j], states[maxState]);
+        }
+    }
+    // 最尤終端
+    double finalMax = -1.0;
+    int finalState = 0;
+    for (int i = 0; i < N; i++) {
+        if (delta[T-1][i] > finalMax) {
+            finalMax = delta[T-1][i];
+            finalState = i;
+        }
+    }
+    printf("最尤終端: 状態=%s, 確率=%f\n", states[finalState], finalMax);
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
 
@@ -405,6 +829,18 @@ s.t.
       </div>
 
       <div class="controls">
+        <label class="label">
+          Auto Play 倍率：
+          <select id="lpSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
+        </label>
+      </div>
+      <div class="step-controls">
         <button id="lpPrevBtn" class="btn" disabled>前へ</button>
         <button id="lpNextBtn" class="btn" disabled>次へ</button>
         <button id="lpAutoBtn" class="btn" disabled>Auto Play</button>
@@ -413,7 +849,32 @@ s.t.
       <div id="lpDesc" class="description">
         <strong>線形計画法（LP）とは：</strong><br>
         目的関数と複数の線形不等式制約から成る最適化問題を解く手法です。<br>
-        「単純形表」を使い、ステップごとにピボット操作を可視化します。
+        「単純形表」を使い、ステップごとにピボット操作を可視化します。<br>
+        下記に C 言語での実装例を示します。（簡易版）
+        <pre><code>
+// C 言語：単純形法の簡易実装サンプル
+#include <stdio.h>
+#define MAXV 10
+#define MAXC 10
+
+// ここでは簡易化のため、固定サイズで実装例を示します。
+// 実用的には行列操作・動的メモリ管理が必要です。
+
+int main() {
+    // maximize 3x + 2y
+    // s.t. x + y ≤ 5, 2x + 3y ≤ 12, x ≤ 3, y ≤ 4
+    double tableau[5][7] = {
+        {1,  1,  0,  0,  1, 5, 0},  // x + y + s1 = 5
+        {2,  3,  0,  0,  0,12, 0},  // 2x + 3y + s2 = 12
+        {1,  0,  0,  0,  0, 3, 0},  // x + s3 = 3
+        {0,  1,  0,  0,  0, 4, 0},  // y + s4 = 4
+        {-3,-2,  0,  0,  0, 0, 0}   // 目的関数行 (-3x -2y + z = 0)
+    };
+    // ここからピボット操作を繰り返す…
+    printf("簡易版：詳細な実装は省略します。\n");
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
 
@@ -427,8 +888,7 @@ s.t.
           <input type="number" id="hash_m" class="input" value="11" min="5" />
         </label>
         <label class="label">キー列（カンマ区切り）：
-          <input type="text" id="hash_keys" class="input"
-                 placeholder="例: 15,11,27,8,12" />
+          <input type="text" id="hash_keys" class="input" placeholder="例: 15,11,27,8,12" />
         </label>
         <label class="label">
           ハッシュ関数 h(k) = k mod m の m を上記テーブルサイズで使用
@@ -442,6 +902,18 @@ s.t.
       </div>
 
       <div class="controls">
+        <label class="label">
+          Auto Play 倍率：
+          <select id="hashSpeedSelect" class="select" style="max-width:120px; margin-top:6px;">
+            <option value="0.5">0.5×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2.0">2.0×</option>
+            <option value="3.0">3.0×</option>
+          </select>
+        </label>
+      </div>
+      <div class="step-controls">
         <button id="hashPrevBtn" class="btn" disabled>前へ</button>
         <button id="hashNextBtn" class="btn" disabled>次へ</button>
         <button id="hashAutoBtn" class="btn" disabled>Auto Play</button>
@@ -451,7 +923,47 @@ s.t.
         <strong>ハッシュ法（オープンアドレス法）とは：</strong><br>
         散列関数 h(k) = k mod m を使い、ハッシュテーブルにキーを挿入する手法です。<br>
         衝突が起きた場合は逐次探索（リニアプロービング）で空きスロットを探します。<br>
-        各ステップの衝突・挿入状況を可視化します。
+        各ステップの衝突・挿入状況を可視化します。<br>
+        下記に C 言語での実装例を示します。
+
+        <pre><code>
+// C 言語：オープンアドレス法の例（リニアプロービング）
+#include <stdio.h>
+#define EMPTY -1
+
+int hash_function(int key, int m) {
+    return key % m;
+}
+
+void insert_linear(int table[], int m, int key) {
+    int idx = hash_function(key, m);
+    int i = 0;
+    while (i < m) {
+        int slot = (idx + i) % m;
+        if (table[slot] == EMPTY) {
+            table[slot] = key;
+            printf("キー %d をスロット %d に挿入\n", key, slot);
+            return;
+        } else {
+            printf("衝突: スロット %d は %d が入っている\n", slot, table[slot]);
+            i++;
+        }
+    }
+    printf("テーブルが満杯: キー %d を挿入できません\n", key);
+}
+
+int main() {
+    int m = 11;
+    int table[11];
+    for (int i = 0; i < 11; i++) table[i] = EMPTY;
+    int keys[] = {15,11,27,8,12};
+    int n = sizeof(keys)/sizeof(keys[0]);
+    for (int i = 0; i < n; i++) {
+        insert_linear(table, m, keys[i]);
+    }
+    return 0;
+}
+        </code></pre>
       </div>
     </section>
   </main>
