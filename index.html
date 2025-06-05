@@ -2,331 +2,16 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>アルゴリズム可視化ツール</title>
+  <title>アルゴリズム可視化ツール（スーパー強化版）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- ===== インラインCSS ===== -->
-  <style>
-    :root {
-      --primary-color: #2c3e50;
-      --secondary-color: #ecf0f1;
-      --accent-color: #3498db;
-      --highlight-color: #f1c40f;
-      --text-color: #2c3e50;
-      --card-bg: #ffffff;
-      --shadow-color: rgba(0, 0, 0, 0.1);
-      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: var(--font-family);
-      background-color: var(--secondary-color);
-      color: var(--text-color);
-    }
-
-    .header {
-      background-color: var(--primary-color);
-      color: var(--secondary-color);
-      padding: 20px 24px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      box-shadow: 0 2px 4px var(--shadow-color);
-    }
-    .header .subtitle {
-      font-size: 14px;
-      display: block;
-      margin-top: 4px;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 24px auto;
-      padding: 0 16px;
-    }
-    .section {
-      margin-bottom: 32px;
-      background-color: var(--card-bg);
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 2px 8px var(--shadow-color);
-    }
-    .section-title {
-      margin: 0 0 12px;
-      font-size: 18px;
-      color: var(--primary-color);
-    }
-
-    /* 色の凡例用 */
-    .legend-items {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 14px;
-    }
-    .legend-color {
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      border: 1px solid #888;
-    }
-    .legend-color.normal {
-      background-color: var(--accent-color);
-    }
-    .legend-color.highlight {
-      background-color: var(--highlight-color);
-    }
-    .legend-color.confirmed {
-      background-color: #2ecc71;
-    }
-
-    /* 共通：入力フォーム・ボタン */
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .label {
-      font-size: 14px;
-      flex: 1 1 auto;
-      min-width: 140px;
-      display: flex;
-      flex-direction: column;
-    }
-    .input, .select, textarea {
-      margin-top: 4px;
-      padding: 6px 8px;
-      font-size: 14px;
-      border: 1px solid #bbb;
-      border-radius: 4px;
-      background-color: var(--secondary-color);
-      color: var(--text-color);
-      width: 100%;
-    }
-    .textarea {
-      resize: vertical;
-    }
-    .btn {
-      padding: 8px 16px;
-      font-size: 14px;
-      font-weight: bold;
-      color: #fff;
-      background-color: var(--accent-color);
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .btn:hover {
-      background-color: #2980b9;
-    }
-    .btn:disabled {
-      background-color: #95a5a6;
-      cursor: not-allowed;
-    }
-
-    /* テーブルをスクロール可能に */
-    .table-wrapper {
-      width: 100%;
-      overflow-x: auto;
-      margin-top: 12px;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      border: 1px solid #888;
-      padding: 6px 8px;
-      text-align: center;
-      font-family: monospace;
-      font-size: 14px;
-      background-color: var(--card-bg);
-      transition: background-color 0.2s;
-    }
-    .highlight {
-      background-color: var(--highlight-color) !important;
-    }
-
-    /* バー表示用 */
-    .bars-wrapper {
-      display: flex;
-      align-items: flex-end;
-      height: 150px;
-      gap: 2px;
-      margin-top: 12px;
-      overflow-x: auto;
-    }
-    .bar {
-      flex: 1;
-      background-color: var(--accent-color);
-      transition: background-color 0.2s, height 0.2s;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-    }
-    .bar.highlight {
-      background-color: var(--highlight-color) !important;
-    }
-    .bar.confirmed {
-      background-color: #2ecc71 !important;
-    }
-
-    /* 説明エリア */
-    .description {
-      margin-top: 12px;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #fafafa;
-      font-size: 14px;
-      min-height: 80px;
-      white-space: pre-wrap;
-    }
-
-    /* ステップ制御ボタン */
-    .step-controls {
-      margin-top: 12px;
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-    .step-controls .btn {
-      padding: 6px 12px;
-      font-size: 13px;
-    }
-
-    /* スライダー */
-    .slider {
-      width: 100%;
-      max-width: 200px;
-      margin-top: 4px;
-    }
-
-    /* 進捗表示 */
-    .progress {
-      margin-top: 8px;
-      font-size: 14px;
-      text-align: right;
-      color: #555;
-    }
-
-    /* Tree/Graph 可視化用 */
-    .graph-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 12px;
-    }
-    .adjacency-table {
-      border-collapse: collapse;
-    }
-    .adjacency-table th, .adjacency-table td {
-      border: 1px solid #888;
-      padding: 6px 8px;
-      font-size: 13px;
-      text-align: left;
-    }
-    .adjacency-table .highlight {
-      background-color: var(--highlight-color) !important;
-    }
-
-    /* LP（単純形法）可視化用 */
-    .simplex-table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 12px;
-    }
-    .simplex-table th, .simplex-table td {
-      border: 1px solid #888;
-      padding: 6px 8px;
-      text-align: center;
-      font-size: 14px;
-      min-width: 40px;
-    }
-    .simplex-table .highlight {
-      background-color: var(--highlight-color) !important;
-    }
-
-    /* ハッシュテーブル用 */
-    .hash-container {
-      display: flex;
-      gap: 4px;
-      margin-top: 12px;
-      overflow-x: auto;
-    }
-    .hash-slot {
-      width: 40px;
-      height: 40px;
-      border: 1px solid #888;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: monospace;
-      font-size: 14px;
-      background-color: var(--accent-color);
-      color: #fff;
-      transition: background-color 0.2s;
-    }
-    .hash-slot.empty {
-      background-color: var(--secondary-color);
-      color: #555;
-    }
-    .hash-slot.highlight {
-      background-color: var(--highlight-color) !important;
-      color: #000;
-    }
-    .hash-slot.confirmed {
-      background-color: #2ecc71 !important;
-      color: #fff;
-    }
-
-    /* レスポンシブ対応 */
-    @media screen and (max-width: 600px) {
-      .controls {
-        flex-direction: column;
-        gap: 8px;
-      }
-      .label {
-        min-width: auto;
-      }
-      .step-controls {
-        flex-direction: column;
-        gap: 4px;
-        align-items: stretch;
-      }
-      .step-controls .btn {
-        width: 100%;
-      }
-      .bars-wrapper {
-        height: 120px;
-      }
-      .hash-slot {
-        width: 32px;
-        height: 32px;
-        font-size: 12px;
-      }
-    }
-  </style>
+  <!-- 外部CSS を読み込む -->
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="header">
-    アルゴリズム可視化ツール<br>
+    アルゴリズム可視化ツール（スーパー強化版）<br>
     <span class="subtitle">
-      ソート・探索・ツリー／グラフ走査・線形計画法・ハッシュ法
+      ソート・探索・HMM（フォワード／ビタビ）・線形計画・ハッシュ法 ＋ ランダム生成＆色の凡例
     </span>
   </header>
 
@@ -350,27 +35,34 @@
       </div>
     </section>
 
-    <!-- ///// アルゴリズム選択 ///// -->
+    <!-- アルゴリズム選択 -->
     <section class="section controls">
       <label class="label" for="algoSelect">アルゴリズムを選択：</label>
       <select id="algoSelect" class="select">
         <option value="">-- 選択してください --</option>
-        <option value="edit">Edit Distance (距離計算)</option>
+        <option value="edit">Edit Distance</option>
         <option value="knapsack">0/1 Knapsack</option>
         <option value="sorting">Sorting</option>
         <option value="searching">Searching</option>
-        <option value="graph">Tree／Graph 走査</option>
+        <option value="forward">Forward アルゴリズム</option>
+        <option value="viterbi">Viterbi アルゴリズム</option>
         <option value="lp">線形計画法（単純形法）</option>
         <option value="hash">ハッシュ法（オープンアドレス法）</option>
       </select>
     </section>
 
-    <!-- ====== Edit Distance 用 ====== -->
+    <!-- ================================
+         1) Edit Distance（編集距離）
+         ================================ -->
     <section id="editControls" class="section algo-controls" style="display:none;">
       <h2 class="section-title">Edit Distance（編集距離）</h2>
       <div class="controls">
-        <label class="label">文字列 1（s1）:<input type="text" id="edit_s1" class="input" placeholder="例: waseda" /></label>
-        <label class="label">文字列 2（s2）:<input type="text" id="edit_s2" class="input" placeholder="例: university" /></label>
+        <label class="label">文字列 1（s1）：
+          <input type="text" id="edit_s1" class="input" placeholder="例: waseda" />
+        </label>
+        <label class="label">文字列 2（s2）：
+          <input type="text" id="edit_s2" class="input" placeholder="例: university" />
+        </label>
         <button id="editInitBtn" class="btn">Initialize</button>
         <button id="editRandomBtn" class="btn">ランダム生成</button>
       </div>
@@ -380,8 +72,12 @@
       </div>
 
       <div class="controls">
-        <label class="label">Auto Play 速度：<span id="editSpeedLabel">1.0</span> 秒</label>
-        <input type="range" id="editSpeedSlider" class="slider" min="0.2" max="2.0" step="0.1" value="1.0" />
+        <label class="label">
+          Auto Play 速度：
+          <span id="editSpeedLabel">1.0</span> 秒
+        </label>
+        <input type="range" id="editSpeedSlider" class="slider"
+               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="editPrevBtn" class="btn" disabled>前へ</button>
@@ -391,18 +87,29 @@
       <div id="editProgress" class="progress">ステップ 0 / 0</div>
       <div id="editDesc" class="description">
         <strong>編集距離（Edit Distance）とは：</strong><br>
-        文字列 A を文字列 B に変換するとき、挿入・削除・置換の操作を最小何回行えばよいかを計算するアルゴリズムです。<br>
-        ここでは DP テーブルを使い、ステップごとにどのように値が埋まるかを可視化します。
+        文字列 A を B に変換するとき、挿入・削除・置換の操作を最小何回行えばよいかを求めるアルゴリズムです。<br>
+        DP テーブルを使って、ステップごとにどのように値が埋まるかを可視化します。
       </div>
     </section>
 
-    <!-- ====== 0/1 Knapsack 用 ====== -->
+    <!-- ================================
+         2) 0/1 Knapsack
+         ================================ -->
     <section id="knapControls" class="section algo-controls" style="display:none;">
       <h2 class="section-title">0/1 Knapsack</h2>
       <div class="controls">
-        <label class="label">重みリスト（カンマ区切り）:<input type="text" id="knap_weights" class="input" placeholder="例: 2,3,4,5" /></label>
-        <label class="label">価値リスト（カンマ区切り）:<input type="text" id="knap_values" class="input" placeholder="例: 3,4,5,6" /></label>
-        <label class="label">容量 (capacity):<input type="number" id="knap_capacity" class="input" placeholder="例: 8" /></label>
+        <label class="label">重みリスト（カンマ区切り）：
+          <input type="text" id="knap_weights" class="input"
+                 placeholder="例: 2,3,4,5" />
+        </label>
+        <label class="label">価値リスト（カンマ区切り）：
+          <input type="text" id="knap_values" class="input"
+                 placeholder="例: 3,4,5,6" />
+        </label>
+        <label class="label">容量 (capacity)：
+          <input type="number" id="knap_capacity" class="input"
+                 placeholder="例: 8" />
+        </label>
         <button id="knapInitBtn" class="btn">Initialize</button>
         <button id="knapRandomBtn" class="btn">ランダム生成</button>
       </div>
@@ -412,8 +119,12 @@
       </div>
 
       <div class="controls">
-        <label class="label">Auto Play 速度：<span id="knapSpeedLabel">1.0</span> 秒</label>
-        <input type="range" id="knapSpeedSlider" class="slider" min="0.2" max="2.0" step="0.1" value="1.0" />
+        <label class="label">
+          Auto Play 速度：
+          <span id="knapSpeedLabel">1.0</span> 秒
+        </label>
+        <input type="range" id="knapSpeedSlider" class="slider"
+               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="knapPrevBtn" class="btn" disabled>前へ</button>
@@ -424,12 +135,14 @@
       <div id="knapDesc" class="description">
         <strong>0/1 Knapsack とは：</strong><br>
         限られた重さのキャパシティの中で、価値を最大化する問題です。<br>
-        各品物は「重み」「価値」を持ち、選ぶ（1） or 選ばない（0）の組み合わせを求めます。<br>
-        DP テーブルをステップごとに可視化し、「入れる場合」「入れない場合」の価値比較を見ていきます。
+        各品物は「重み」「価値」を持ち、選ぶ（1）・選ばない（0）の組み合わせを決めます。<br>
+        DP テーブルを可視化し、「入れる場合」「入れない場合」の価値を比較します。
       </div>
     </section>
 
-    <!-- ====== Sorting 用 ====== -->
+    <!-- ================================
+         3) Sorting（ソート）
+         ================================ -->
     <section id="sortControls" class="section algo-controls" style="display:none;">
       <h2 class="section-title">Sorting（ソート）</h2>
       <div class="controls">
@@ -442,17 +155,23 @@
             <option value="select">選択ソート</option>
           </select>
         </label>
-        <label class="label">ソート対象リスト:<input type="text" id="sort_array" class="input" placeholder="例: 5,2,9,1,5" /></label>
+        <label class="label">ソート対象リスト：
+          <input type="text" id="sort_array" class="input"
+                 placeholder="例: 5,2,9,1,5" />
+        </label>
         <button id="sortInitBtn" class="btn">Initialize</button>
         <button id="sortRandomBtn" class="btn">ランダム生成</button>
       </div>
 
-      <!-- バー表示エリア -->
       <div id="sortBars" class="bars-wrapper"></div>
 
       <div class="controls">
-        <label class="label">Auto Play 速度：<span id="sortSpeedLabel">1.0</span> 秒</label>
-        <input type="range" id="sortSpeedSlider" class="slider" min="0.2" max="2.0" step="0.1" value="1.0" />
+        <label class="label">
+          Auto Play 速度：
+          <span id="sortSpeedLabel">1.0</span> 秒
+        </label>
+        <input type="range" id="sortSpeedSlider" class="slider"
+               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="sortPrevBtn" class="btn" disabled>前へ</button>
@@ -462,17 +181,21 @@
       <div id="sortProgress" class="progress">ステップ 0 / 0</div>
       <div id="sortDesc" class="description">
         <strong>Sorting とは：</strong><br>
-        配列を昇順（小さい順）などの規則で並び替える操作です。<br>
-        ■ バブルソート：隣り合う要素を比較し、大きいものを右へ“泡”のように浮かせます。<br>
-        ■ クイックソート：ピボットを中心に左右に分割し、再帰的にソートする分割統治法。<br>
-        ■ マージソート：配列を二分し、それぞれをソートしてからマージする分割統治法。<br>
-        ■ 挿入ソート：先頭から順に要素を取り出し、左側のソート済み部分に適切な位置へ挿入します。<br>
-        ■ 選択ソート：未ソート部分から最小値を探し、先頭と交換していきます。<br>
-        それぞれのアルゴリズムを**バー表示**でステップごとに可視化します。
+        配列を昇順（小さい順）に並び替える操作です。<br>
+        さまざまな手法をバー表示でステップごとに可視化します：
+        <ul>
+          <li>バブルソート</li>
+          <li>クイックソート</li>
+          <li>マージソート</li>
+          <li>挿入ソート</li>
+          <li>選択ソート</li>
+        </ul>
       </div>
     </section>
 
-    <!-- ====== Searching 用 ====== -->
+    <!-- ================================
+         4) Searching（線形探索／2分探索／番兵法）
+         ================================ -->
     <section id="searchControls" class="section algo-controls" style="display:none;">
       <h2 class="section-title">Searching（探索）</h2>
       <div class="controls">
@@ -483,18 +206,27 @@
             <option value="sentinel">番兵法 (Sentinel)</option>
           </select>
         </label>
-        <label class="label">探索対象リスト:<input type="text" id="search_array" class="input" placeholder="例: 1,2,3,5,7,8" /></label>
-        <label class="label">探索キー:<input type="number" id="search_key" class="input" placeholder="例: 5" /></label>
+        <label class="label">探索対象リスト：
+          <input type="text" id="search_array" class="input"
+                 placeholder="例: 1,2,3,5,7,8" />
+        </label>
+        <label class="label">探索キー：
+          <input type="number" id="search_key" class="input"
+                 placeholder="例: 5" />
+        </label>
         <button id="searchInitBtn" class="btn">Initialize</button>
         <button id="searchRandomBtn" class="btn">ランダム生成</button>
       </div>
 
-      <!-- バー表示エリア -->
       <div id="searchBars" class="bars-wrapper"></div>
 
       <div class="controls">
-        <label class="label">Auto Play 速度：<span id="searchSpeedLabel">1.0</span> 秒</label>
-        <input type="range" id="searchSpeedSlider" class="slider" min="0.2" max="2.0" step="0.1" value="1.0" />
+        <label class="label">
+          Auto Play 速度：
+          <span id="searchSpeedLabel">1.0</span> 秒
+        </label>
+        <input type="range" id="searchSpeedSlider" class="slider"
+               min="0.2" max="2.0" step="0.1" value="1.0" />
       </div>
       <div class="step-controls">
         <button id="searchPrevBtn" class="btn" disabled>前へ</button>
@@ -504,50 +236,154 @@
       <div id="searchProgress" class="progress">ステップ 0 / 0</div>
       <div id="searchDesc" class="description">
         <strong>Searching とは：</strong><br>
-        データ構造から特定の値（キー）を見つける操作です。<br>
-        ■ 線形探索：先頭から順番に１つずつチェックします。<br>
-        ■ 2分探索：あらかじめソート済みの配列で真ん中を比較し、範囲を半分に絞る高速手法です。<br>
-        ■ 番兵法：探索キーを末尾に「番兵」として追加し、ループ条件を簡略化するテクニックです。<br>
-        それぞれの比較ステップを**バー表示**で可視化します。
+        配列から特定の値（キー）を見つける操作です：
+        <ul>
+          <li>線形探索：先頭から順次チェック</li>
+          <li>2分探索：あらかじめソート済み配列から中央を比較し範囲を半分に絞る</li>
+          <li>番兵法：末尾に「番兵」を追加してループ条件をシンプルに</li>
+        </ul>
+        バー表示を使って、各ステップでどの要素をチェックしているかを可視化します。        
       </div>
     </section>
 
-    <!-- ====== Tree／Graph Traversal 用 ====== -->
-    <section id="graphControls" class="section algo-controls" style="display:none;">
-      <h2 class="section-title">Tree／Graph 走査（DFS／BFS）</h2>
+    <!-- ================================
+         5) Forward アルゴリズム（HMM）
+         ================================ -->
+    <section id="forwardControls" class="section algo-controls" style="display:none;">
+      <h2 class="section-title">Forward アルゴリズム（HMM）</h2>
       <div class="controls">
-        <label class="label">ノード数:<input type="number" id="graph_n" class="input" value="7" min="2" /></label>
-        <label class="label">辺リスト（カンマ区切りの `u-v`）:<input type="text" id="graph_edges" class="input" placeholder="例: 1-2,1-3,2-4,2-5,3-6,3-7" /></label>
-        <label class="label">開始ノード:<input type="number" id="graph_start" class="input" value="1" min="1" /></label>
-        <button id="graphInitBtn" class="btn">Initialize</button>
-        <button id="graphRandomBtn" class="btn">ランダム生成</button>
-      </div>
-
-      <div id="graphContainer" class="graph-container">
-        <table id="adjTable" class="adjacency-table"></table>
-      </div>
-
-      <div class="controls">
-        <label class="label">探索方法：
-          <select id="graphAlgoSelect" class="select">
-            <option value="dfs">DFS（深さ優先探索）</option>
-            <option value="bfs">BFS（幅優先探索）</option>
-          </select>
+        <label class="label">状態（カンマ区切り）：
+          <input type="text" id="fwd_states" class="input"
+                 placeholder="例: Rainy,Sunny" />
         </label>
-        <button id="graphPrevBtn" class="btn" disabled>前へ</button>
-        <button id="graphNextBtn" class="btn" disabled>次へ</button>
-        <button id="graphAutoBtn" class="btn" disabled>Auto Play</button>
+        <label class="label">観測系列（カンマ区切り）：
+          <input type="text" id="fwd_obs" class="input"
+                 placeholder="例: walk,shop,clean" />
+        </label>
       </div>
-      <div id="graphProgress" class="progress">ステップ 0 / 0</div>
-      <div id="graphDesc" class="description">
-        <strong>Tree／Graph 走査とは：</strong><br>
-        隣接リストで表現されたグラフを、DFS（深さ優先）または BFS（幅優先）で巡回し、
-        訪問順序を可視化します。<br>
-        隣接リストのテーブルを用意し、各ステップで「今どのノードを訪問しているか」を色付きで示します。
+      <div class="controls">
+        <label class="label">初期確率 π（コンマ区切り；状態順）：
+          <input type="text" id="fwd_pi" class="input"
+                 placeholder="例: 0.6,0.4" />
+        </label>
+      </div>
+      <div class="controls">
+        <label class="label">遷移確率 A（行ごとにカンマ区切り，改行区切り）：
+          <textarea id="fwd_A" class="input" rows="3"
+            placeholder="例：
+0.7,0.3
+0.4,0.6"></textarea>
+        </label>
+      </div>
+      <div class="controls">
+        <label class="label">出力確率 B（行ごとにカンマ区切り，改行区切り）：
+          <textarea id="fwd_B" class="input" rows="3"
+            placeholder="例：
+0.1,0.4,0.5
+0.6,0.3,0.1"></textarea>
+        </label>
+      </div>
+      <div class="controls">
+        <button id="fwdInitBtn" class="btn">Initialize</button>
+        <!-- ランダム生成は難しいので省略 -->
+      </div>
+
+      <div id="fwdTableWrapper" class="table-wrapper">
+        <table id="fwdTable"></table>
+      </div>
+
+      <div class="controls">
+        <label class="label">
+          Auto Play 速度：
+          <span id="fwdSpeedLabel">1.0</span> 秒
+        </label>
+        <input type="range" id="fwdSpeedSlider" class="slider"
+               min="0.2" max="2.0" step="0.1" value="1.0" />
+      </div>
+      <div class="step-controls">
+        <button id="fwdPrevBtn" class="btn" disabled>前へ</button>
+        <button id="fwdNextBtn" class="btn" disabled>次へ</button>
+        <button id="fwdAutoBtn" class="btn" disabled>Auto Play</button>
+      </div>
+      <div id="fwdProgress" class="progress">ステップ 0 / 0</div>
+      <div id="fwdDesc" class="description">
+        <strong>Forward アルゴリズムとは：</strong><br>
+        HMM（隠れマルコフモデル）において、観測系列が与えられたとき、
+        すべての隠れ状態列の総和を効率的に計算し、観測系列の尤度を求める手法です。<br>
+        トレリス（時間×状態 の格子）を使い、ステップごとに確率を更新していきます。
       </div>
     </section>
 
-    <!-- ====== 線形計画法（単純形法）用 ====== -->
+    <!-- ================================
+         6) Viterbi アルゴリズム（HMM）
+         ================================ -->
+    <section id="viterbiControls" class="section algo-controls" style="display:none;">
+      <h2 class="section-title">Viterbi アルゴリズム（HMM）</h2>
+      <div class="controls">
+        <label class="label">状態（カンマ区切り）：
+          <input type="text" id="vit_states" class="input"
+                 placeholder="例: Rainy,Sunny" />
+        </label>
+        <label class="label">観測系列（カンマ区切り）：
+          <input type="text" id="vit_obs" class="input"
+                 placeholder="例: walk,shop,clean" />
+        </label>
+      </div>
+      <div class="controls">
+        <label class="label">初期確率 π（コンマ区切り；状態順）：
+          <input type="text" id="vit_pi" class="input"
+                 placeholder="例: 0.6,0.4" />
+        </label>
+      </div>
+      <div class="controls">
+        <label class="label">遷移確率 A（行ごとにカンマ区切り，改行区切り）：
+          <textarea id="vit_A" class="input" rows="3"
+            placeholder="例：
+0.7,0.3
+0.4,0.6"></textarea>
+        </label>
+      </div>
+      <div class="controls">
+        <label class="label">出力確率 B（行ごとにカンマ区切り，改行区切り）：
+          <textarea id="vit_B" class="input" rows="3"
+            placeholder="例：
+0.1,0.4,0.5
+0.6,0.3,0.1"></textarea>
+        </label>
+      </div>
+      <div class="controls">
+        <button id="vitInitBtn" class="btn">Initialize</button>
+      </div>
+
+      <div id="vitTableWrapper" class="table-wrapper">
+        <table id="vitTable"></table>
+      </div>
+
+      <div class="controls">
+        <label class="label">
+          Auto Play 速度：
+          <span id="vitSpeedLabel">1.0</span> 秒
+        </label>
+        <input type="range" id="vitSpeedSlider" class="slider"
+               min="0.2" max="2.0" step="0.1" value="1.0" />
+      </div>
+      <div class="step-controls">
+        <button id="vitPrevBtn" class="btn" disabled>前へ</button>
+        <button id="vitNextBtn" class="btn" disabled>次へ</button>
+        <button id="vitAutoBtn" class="btn" disabled>Auto Play</button>
+      </div>
+      <div id="vitProgress" class="progress">ステップ 0 / 0</div>
+      <div id="vitDesc" class="description">
+        <strong>Viterbi アルゴリズムとは：</strong><br>
+        HMM において、観測系列が与えられたとき、「最も尤もらしい（最大尤度の）隠れ状態列」を
+        動的に求める手法です。<br>
+        トレリス（時間×状態 の格子）を使い、ステップごとに最適経路とその確率を更新していきます。
+      </div>
+    </section>
+
+    <!-- ================================
+         7) 線形計画法（単純形法）
+         ================================ -->
     <section id="lpControls" class="section algo-controls" style="display:none;">
       <h2 class="section-title">線形計画法（単純形法）</h2>
       <div class="controls">
@@ -576,19 +412,27 @@ s.t.
       <div id="lpProgress" class="progress">ステップ 0 / 0</div>
       <div id="lpDesc" class="description">
         <strong>線形計画法（LP）とは：</strong><br>
-        目的関数と複数の線形不等式制約から構成される最適化問題を解く手法です。<br>
-        ここでは「単純形表」を使って各ステップのピボット操作を可視化し、
-        目的関数値がどう増減していくかを追跡します。
+        目的関数と複数の線形不等式制約から成る最適化問題を解く手法です。<br>
+        「単純形表」を使い、ステップごとにピボット操作を可視化します。
       </div>
     </section>
 
-    <!-- ====== ハッシュ法（オープンアドレス法）用 ====== -->
+    <!-- ================================
+         8) ハッシュ法（オープンアドレス法）
+         ================================ -->
     <section id="hashControls" class="section algo-controls" style="display:none;">
       <h2 class="section-title">ハッシュ法（オープンアドレス法）</h2>
       <div class="controls">
-        <label class="label">テーブルサイズ:<input type="number" id="hash_m" class="input" value="11" min="5" /></label>
-        <label class="label">キー列（カンマ区切り）:<input type="text" id="hash_keys" class="input" placeholder="例: 15,11,27,8,12" /></label>
-        <label class="label">ハッシュ関数 h(k) = k mod m の m を上記テーブルサイズで使用</label>
+        <label class="label">テーブルサイズ：
+          <input type="number" id="hash_m" class="input" value="11" min="5" />
+        </label>
+        <label class="label">キー列（カンマ区切り）：
+          <input type="text" id="hash_keys" class="input"
+                 placeholder="例: 15,11,27,8,12" />
+        </label>
+        <label class="label">
+          ハッシュ関数 h(k) = k mod m の m を上記テーブルサイズで使用
+        </label>
         <button id="hashInitBtn" class="btn">Initialize</button>
         <button id="hashRandomBtn" class="btn">ランダム生成</button>
       </div>
@@ -605,1442 +449,14 @@ s.t.
       <div id="hashProgress" class="progress">ステップ 0 / 0</div>
       <div id="hashDesc" class="description">
         <strong>ハッシュ法（オープンアドレス法）とは：</strong><br>
-        散列関数 h(k) = k mod m を用いて、ハッシュテーブルにキーを挿入する手法です。<br>
-        衝突が起きた場合、逐次探索（リニアプロービングなど）で空きスロットを探します。<br>
-        ここでは「挿入順序」と「衝突時の再探査」をステップごとに可視化します。
+        散列関数 h(k) = k mod m を使い、ハッシュテーブルにキーを挿入する手法です。<br>
+        衝突が起きた場合は逐次探索（リニアプロービング）で空きスロットを探します。<br>
+        各ステップの衝突・挿入状況を可視化します。
       </div>
     </section>
   </main>
 
-  <!-- ===== インラインJavaScript ===== -->
-  <script>
-    // -------------------------------------------------
-    // 共通ユーティリティ関数
-    // -------------------------------------------------
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    function clearDistinctHighlights(selector) {
-      document.querySelectorAll(selector + ' .highlight').forEach(elem => {
-        elem.classList.remove('highlight');
-      });
-    }
-    function updateProgress() {
-      const total = steps.length;
-      const current = currentIndex < 0 ? 0 : (currentIndex + 1);
-      if (editControls.style.display === 'block') {
-        editProgress.textContent = `ステップ ${current} / ${total}`;
-      } else if (knapControls.style.display === 'block') {
-        knapProgress.textContent = `ステップ ${current} / ${total}`;
-      } else if (sortControls.style.display === 'block') {
-        sortProgress.textContent = `ステップ ${current} / ${total}`;
-      } else if (searchControls.style.display === 'block') {
-        searchProgress.textContent = `ステップ ${current} / ${total}`;
-      } else if (graphControls.style.display === 'block') {
-        graphProgress.textContent = `ステップ ${current} / ${total}`;
-      } else if (lpControls.style.display === 'block') {
-        lpProgress.textContent = `ステップ ${current} / ${total}`;
-      } else if (hashControls.style.display === 'block') {
-        hashProgress.textContent = `ステップ ${current} / ${total}`;
-      }
-    }
-
-    function disableAllStepButtons() {
-      [
-        editPrevBtn, editNextBtn, editAutoBtn,
-        knapPrevBtn, knapNextBtn, knapAutoBtn,
-        sortPrevBtn, sortNextBtn, sortAutoBtn,
-        searchPrevBtn, searchNextBtn, searchAutoBtn,
-        graphPrevBtn, graphNextBtn, graphAutoBtn,
-        lpPrevBtn, lpNextBtn, lpAutoBtn,
-        hashPrevBtn, hashNextBtn, hashAutoBtn
-      ].forEach(btn => { if (btn) btn.disabled = true; });
-    }
-    function updateStepButtons() {
-      if (editControls.style.display === 'block' && steps.length > 0) {
-        editPrevBtn.disabled = (currentIndex <= 0);
-        editNextBtn.disabled = (currentIndex >= steps.length - 1);
-        editAutoBtn.disabled = false;
-      }
-      if (knapControls.style.display === 'block' && steps.length > 0) {
-        knapPrevBtn.disabled = (currentIndex <= 0);
-        knapNextBtn.disabled = (currentIndex >= steps.length - 1);
-        knapAutoBtn.disabled = false;
-      }
-      if (sortControls.style.display === 'block' && steps.length > 0) {
-        sortPrevBtn.disabled = (currentIndex <= 0);
-        sortNextBtn.disabled = (currentIndex >= steps.length - 1);
-        sortAutoBtn.disabled = false;
-      }
-      if (searchControls.style.display === 'block' && steps.length > 0) {
-        searchPrevBtn.disabled = (currentIndex <= 0);
-        searchNextBtn.disabled = (currentIndex >= steps.length - 1);
-        searchAutoBtn.disabled = false;
-      }
-      if (graphControls.style.display === 'block' && steps.length > 0) {
-        graphPrevBtn.disabled = (currentIndex <= 0);
-        graphNextBtn.disabled = (currentIndex >= steps.length - 1);
-        graphAutoBtn.disabled = false;
-      }
-      if (lpControls.style.display === 'block' && steps.length > 0) {
-        lpPrevBtn.disabled = (currentIndex <= 0);
-        lpNextBtn.disabled = (currentIndex >= steps.length - 1);
-        lpAutoBtn.disabled = false;
-      }
-      if (hashControls.style.display === 'block' && steps.length > 0) {
-        hashPrevBtn.disabled = (currentIndex <= 0);
-        hashNextBtn.disabled = (currentIndex >= steps.length - 1);
-        hashAutoBtn.disabled = false;
-      }
-    }
-
-    function clearAutoPlay() {
-      if (autoTimer !== null) {
-        clearInterval(autoTimer);
-        autoTimer = null;
-      }
-      [
-        editAutoBtn, knapAutoBtn, sortAutoBtn, searchAutoBtn,
-        graphAutoBtn, lpAutoBtn, hashAutoBtn
-      ].forEach(btn => {
-        if (btn) btn.textContent = 'Auto Play';
-      });
-    }
-
-    function toggleAutoPlay() {
-      let interval, autoBtn;
-      if (editControls.style.display === 'block') {
-        interval = editInterval; autoBtn = editAutoBtn;
-      } else if (knapControls.style.display === 'block') {
-        interval = knapInterval; autoBtn = knapAutoBtn;
-      } else if (sortControls.style.display === 'block') {
-        interval = sortInterval; autoBtn = sortAutoBtn;
-      } else if (searchControls.style.display === 'block') {
-        interval = searchInterval; autoBtn = searchAutoBtn;
-      } else if (graphControls.style.display === 'block') {
-        interval = graphInterval; autoBtn = graphAutoBtn;
-      } else if (lpControls.style.display === 'block') {
-        interval = lpInterval; autoBtn = lpAutoBtn;
-      } else if (hashControls.style.display === 'block') {
-        interval = hashInterval; autoBtn = hashAutoBtn;
-      } else {
-        return;
-      }
-
-      if (autoTimer === null) {
-        autoBtn.textContent = 'Pause';
-        autoTimer = setInterval(() => {
-          if (currentIndex < steps.length - 1) {
-            currentIndex++;
-            renderStep();
-          } else {
-            clearAutoPlay();
-            updateStepButtons();
-          }
-        }, interval);
-      } else {
-        clearAutoPlay();
-        updateStepButtons();
-      }
-    }
-
-    function onPrevStep() { if (currentIndex > 0) { currentIndex--; renderStep(); } }
-    function onNextStep() { if (currentIndex < steps.length - 1) { currentIndex++; renderStep(); } }
-
-    // -------------------------------------------------
-    // 各種要素取得
-    // -------------------------------------------------
-    const algoSelect      = document.getElementById('algoSelect');
-
-    // Edit
-    const editControls      = document.getElementById('editControls');
-    const editInitBtn       = document.getElementById('editInitBtn');
-    const editRandomBtn     = document.getElementById('editRandomBtn');
-    const editPrevBtn       = document.getElementById('editPrevBtn');
-    const editNextBtn       = document.getElementById('editNextBtn');
-    const editAutoBtn       = document.getElementById('editAutoBtn');
-    const editTable         = document.getElementById('editTable');
-    const editDesc          = document.getElementById('editDesc');
-    const editS1Input       = document.getElementById('edit_s1');
-    const editS2Input       = document.getElementById('edit_s2');
-    const editSpeedSlider   = document.getElementById('editSpeedSlider');
-    const editSpeedLabel    = document.getElementById('editSpeedLabel');
-    const editProgress      = document.getElementById('editProgress');
-
-    // Knapsack
-    const knapControls      = document.getElementById('knapControls');
-    const knapInitBtn       = document.getElementById('knapInitBtn');
-    const knapRandomBtn     = document.getElementById('knapRandomBtn');
-    const knapPrevBtn       = document.getElementById('knapPrevBtn');
-    const knapNextBtn       = document.getElementById('knapNextBtn');
-    const knapAutoBtn       = document.getElementById('knapAutoBtn');
-    const knapTable         = document.getElementById('knapTable');
-    const knapDesc          = document.getElementById('knapDesc');
-    const knapWeightsInput  = document.getElementById('knap_weights');
-    const knapValuesInput   = document.getElementById('knap_values');
-    const knapCapacityInput = document.getElementById('knap_capacity');
-    const knapSpeedSlider   = document.getElementById('knapSpeedSlider');
-    const knapSpeedLabel    = document.getElementById('knapSpeedLabel');
-    const knapProgress      = document.getElementById('knapProgress');
-
-    // Sorting
-    const sortControls      = document.getElementById('sortControls');
-    const sortInitBtn       = document.getElementById('sortInitBtn');
-    const sortRandomBtn     = document.getElementById('sortRandomBtn');
-    const sortPrevBtn       = document.getElementById('sortPrevBtn');
-    const sortNextBtn       = document.getElementById('sortNextBtn');
-    const sortAutoBtn       = document.getElementById('sortAutoBtn');
-    const sortBars          = document.getElementById('sortBars');
-    const sortDesc          = document.getElementById('sortDesc');
-    const sortArrayInput    = document.getElementById('sort_array');
-    const sortAlgoSelect    = document.getElementById('sortAlgoSelect');
-    const sortSpeedSlider   = document.getElementById('sortSpeedSlider');
-    const sortSpeedLabel    = document.getElementById('sortSpeedLabel');
-    const sortProgress      = document.getElementById('sortProgress');
-
-    // Searching
-    const searchControls     = document.getElementById('searchControls');
-    const searchInitBtn      = document.getElementById('searchInitBtn');
-    const searchRandomBtn    = document.getElementById('searchRandomBtn');
-    const searchPrevBtn      = document.getElementById('searchPrevBtn');
-    const searchNextBtn      = document.getElementById('searchNextBtn');
-    const searchAutoBtn      = document.getElementById('searchAutoBtn');
-    const searchBars         = document.getElementById('searchBars');
-    const searchDesc         = document.getElementById('searchDesc');
-    const searchArrayInput   = document.getElementById('search_array');
-    const searchKeyInput     = document.getElementById('search_key');
-    const searchAlgoSelect   = document.getElementById('searchAlgoSelect');
-    const searchSpeedSlider  = document.getElementById('searchSpeedSlider');
-    const searchSpeedLabel   = document.getElementById('searchSpeedLabel');
-    const searchProgress     = document.getElementById('searchProgress');
-
-    // Graph（Tree/Graph Traversal）
-    const graphControls      = document.getElementById('graphControls');
-    const graph_n            = document.getElementById('graph_n');
-    const graph_edges        = document.getElementById('graph_edges');
-    const graph_start        = document.getElementById('graph_start');
-    const graphInitBtn       = document.getElementById('graphInitBtn');
-    const graphRandomBtn     = document.getElementById('graphRandomBtn');
-    const graphAlgoSelect    = document.getElementById('graphAlgoSelect');
-    const graphPrevBtn       = document.getElementById('graphPrevBtn');
-    const graphNextBtn       = document.getElementById('graphNextBtn');
-    const graphAutoBtn       = document.getElementById('graphAutoBtn');
-    const adjTable           = document.getElementById('adjTable');
-    const graphProgress      = document.getElementById('graphProgress');
-    const graphDesc          = document.getElementById('graphDesc');
-
-    // LP（Linear Programming）
-    const lpControls         = document.getElementById('lpControls');
-    const lp_input           = document.getElementById('lp_input');
-    const lpInitBtn          = document.getElementById('lpInitBtn');
-    const lpRandomBtn        = document.getElementById('lpRandomBtn');
-    const lpPrevBtn          = document.getElementById('lpPrevBtn');
-    const lpNextBtn          = document.getElementById('lpNextBtn');
-    const lpAutoBtn          = document.getElementById('lpAutoBtn');
-    const simplexTable       = document.getElementById('simplexTable');
-    const lpProgress         = document.getElementById('lpProgress');
-    const lpDesc             = document.getElementById('lpDesc');
-
-    // Hash（Open Addressing）
-    const hashControls       = document.getElementById('hashControls');
-    const hash_m             = document.getElementById('hash_m');
-    const hash_keys          = document.getElementById('hash_keys');
-    const hashInitBtn        = document.getElementById('hashInitBtn');
-    const hashRandomBtn      = document.getElementById('hashRandomBtn');
-    const hashPrevBtn        = document.getElementById('hashPrevBtn');
-    const hashNextBtn        = document.getElementById('hashNextBtn');
-    const hashAutoBtn        = document.getElementById('hashAutoBtn');
-    const hashContainer      = document.getElementById('hashContainer');
-    const hashProgress       = document.getElementById('hashProgress');
-    const hashDesc           = document.getElementById('hashDesc');
-
-    // 各アルゴリズム用ステップ配列とインターバル
-    let steps = [], currentIndex = -1, autoTimer = null;
-    let editInterval   = 1000, knapInterval   = 1000;
-    let sortInterval   = 1000, searchInterval = 1000;
-    let graphInterval  = 1000, lpInterval     = 1000;
-    let hashInterval   = 1000;
-    let hashTableState = [];
-
-    // -------------------------------------------------
-    // アルゴリズム選択で各セクションを切替え
-    // -------------------------------------------------
-    algoSelect.addEventListener('change', () => {
-      const val = algoSelect.value;
-      [
-        editControls, knapControls, sortControls, searchControls,
-        graphControls, lpControls, hashControls
-      ].forEach(div => { div.style.display = 'none'; });
-      clearAutoPlay();
-      disableAllStepButtons();
-      if (val === 'edit')        editControls.style.display = 'block';
-      else if (val === 'knapsack')knapControls.style.display = 'block';
-      else if (val === 'sorting') sortControls.style.display = 'block';
-      else if (val === 'searching')searchControls.style.display = 'block';
-      else if (val === 'graph')   graphControls.style.display = 'block';
-      else if (val === 'lp')      lpControls.style.display = 'block';
-      else if (val === 'hash')    hashControls.style.display = 'block';
-    });
-
-    // -------------------------------------------------
-    // 各スライダーで速度を変更
-    // -------------------------------------------------
-    editSpeedSlider.addEventListener('input', () => {
-      editInterval = parseFloat(editSpeedSlider.value) * 1000;
-      editSpeedLabel.textContent = editSpeedSlider.value;
-    });
-    knapSpeedSlider.addEventListener('input', () => {
-      knapInterval = parseFloat(knapSpeedSlider.value) * 1000;
-      knapSpeedLabel.textContent = knapSpeedSlider.value;
-    });
-    sortSpeedSlider.addEventListener('input', () => {
-      sortInterval = parseFloat(sortSpeedSlider.value) * 1000;
-      sortSpeedLabel.textContent = sortSpeedSlider.value;
-    });
-    searchSpeedSlider.addEventListener('input', () => {
-      searchInterval = parseFloat(searchSpeedSlider.value) * 1000;
-      searchSpeedLabel.textContent = searchSpeedSlider.value;
-    });
-    // Graph, LP, Hash 用のスライダーがあれば同様に設定
-
-    // -------------------------------------------------
-    // 1) Edit Distance
-    // -------------------------------------------------
-    function generateEditDistanceSteps(s1, s2) {
-      const n = s1.length, m = s2.length;
-      const dp = [];
-      for (let i = 0; i <= n; i++) dp.push(new Array(m + 1).fill(0));
-      const tableSteps = [];
-
-      dp[0][0] = 0;
-      tableSteps.push({
-        type: 'cell', i: 0, j: 0, value: 0,
-        message: `dp[0][0] = 0 に初期化。\n空文字→空文字なので操作不要です。`
-      });
-      for (let i = 1; i <= n; i++) {
-        dp[i][0] = i;
-        tableSteps.push({
-          type: 'cell', i: i, j: 0, value: dp[i][0],
-          message: `dp[${i}][0] = ${i} に設定（削除コスト）。\n「${s1.charAt(i-1)}」を削除して空文字にする操作が ${i} 回必要。`
-        });
-      }
-      for (let j = 1; j <= m; j++) {
-        dp[0][j] = j;
-        tableSteps.push({
-          type: 'cell', i: 0, j: j, value: dp[0][j],
-          message: `dp[0][${j}] = ${j} に設定（挿入コスト）。\n空文字→「${s2.charAt(j-1)}」を挿入し続ける操作が ${j} 回。`
-        });
-      }
-      for (let i = 1; i <= n; i++) {
-        for (let j = 1; j <= m; j++) {
-          const cost = (s1.charAt(i - 1) === s2.charAt(j - 1)) ? 0 : 1;
-          const deleteCost = dp[i - 1][j] + 1;
-          const insertCost = dp[i][j - 1] + 1;
-          const replaceCost = dp[i - 1][j - 1] + cost;
-          const minCost = Math.min(deleteCost, insertCost, replaceCost);
-          dp[i][j] = minCost;
-
-          let explanation;
-          if (cost === 0) {
-            explanation = `文字「${s1.charAt(i-1)}」と「${s2.charAt(j-1)}」は同じ。置換コストは 0。`;
-          } else {
-            explanation = `文字「${s1.charAt(i-1)}」と「${s2.charAt(j-1)}」は異なる。置換コストは 1。`;
-          }
-          explanation += `\n削除: dp[${i-1}][${j}]+1 = ${deleteCost} 、挿入: dp[${i}][${j-1}]+1 = ${insertCost} 、置換: dp[${i-1}][${j-1}]+${cost} = ${replaceCost}。`;
-          explanation += `\n→ 最小値 ${dp[i][j]} を dp[${i}][${j}] に設定。`;
-
-          tableSteps.push({
-            type: 'cell', i: i, j: j, value: dp[i][j],
-            message: explanation
-          });
-        }
-      }
-      tableSteps.push({
-        type: 'end',
-        message: `計算完了！ 編集距離は dp[${n}][${m}] = ${dp[n][m]} です。`
-      });
-      return tableSteps;
-    }
-
-    editInitBtn.addEventListener('click', () => {
-      const s1 = editS1Input.value.trim();
-      const s2 = editS2Input.value.trim();
-      if (!s1 || !s2) {
-        alert('文字列 1 と 文字列 2 を両方入力してください。');
-        return;
-      }
-      clearAutoPlay();
-      steps = generateEditDistanceSteps(s1, s2);
-      currentIndex = 0;
-
-      while (editTable.firstChild) editTable.firstChild.remove();
-      const n = s1.length, m = s2.length;
-      for (let r = 0; r <= n + 1; r++) {
-        const tr = document.createElement('tr');
-        for (let c = 0; c <= m + 1; c++) {
-          let cell;
-          if (r === 0 || c === 0) cell = document.createElement('th');
-          else cell = document.createElement('td');
-          if (r >= 1 && c >= 1) {
-            const i = r - 1, j = c - 1;
-            cell.id = `editTable-cell-${i}-${j}`;
-            cell.textContent = '';
-          }
-          if (r === 0 && c === 0) cell.textContent = '';
-          else if (r === 0 && c >= 2) cell.textContent = s2[c - 2];
-          else if (c === 0 && r >= 2) cell.textContent = s1[r - 2];
-          else if ((r === 0 && c === 1) || (r === 1 && c === 0)) cell.textContent = '';
-          tr.appendChild(cell);
-        }
-        editTable.appendChild(tr);
-      }
-      renderStep();
-    });
-
-    // ランダム文字列生成（Edit Distance）
-    editRandomBtn.addEventListener('click', () => {
-      const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-      const len1 = Math.floor(Math.random() * 6) + 3;
-      const len2 = Math.floor(Math.random() * 6) + 3;
-      let s1 = '', s2 = '';
-      for (let i = 0; i < len1; i++) s1 += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-      for (let j = 0; j < len2; j++) s2 += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-      editS1Input.value = s1;
-      editS2Input.value = s2;
-    });
-
-    // -------------------------------------------------
-    // 2) 0/1 Knapsack
-    // -------------------------------------------------
-    function generateKnapsackSteps(weights, values, capacity) {
-      const n = weights.length;
-      const W = capacity;
-      const dp = [];
-      for (let i = 0; i <= n; i++) dp.push(new Array(W + 1).fill(0));
-      const tableSteps = [];
-
-      for (let j = 0; j <= W; j++) {
-        dp[0][j] = 0;
-        tableSteps.push({
-          type: 'cell', i: 0, j: j, value: 0,
-          message: `品物0個で容量${j}なら価値0。`
-        });
-      }
-
-      for (let i = 1; i <= n; i++) {
-        for (let j = 0; j <= W; j++) {
-          if (weights[i - 1] > j) {
-            dp[i][j] = dp[i - 1][j];
-            tableSteps.push({
-              type: 'cell', i: i, j: j, value: dp[i][j],
-              message: `品物 ${i}（重さ=${weights[i - 1]}）は容量${j}に入らない → dp[${i}][${j}] = ${dp[i - 1][j]}`
-            });
-          } else {
-            const withoutItem = dp[i - 1][j];
-            const withItem = dp[i - 1][j - weights[i - 1]] + values[i - 1];
-            if (withoutItem >= withItem) {
-              dp[i][j] = withoutItem;
-              tableSteps.push({
-                type: 'cell', i: i, j: j, value: dp[i][j],
-                message:
-                  `品物 ${i}（重さ=${weights[i - 1]}, 価値=${values[i - 1]}） を入れない場合の価値 = ${withoutItem}\n` +
-                  `品物 ${i} を入れる場合の価値 = ${withItem}\n` +
-                  `→ ${withoutItem} の方が大きいので dp[${i}][${j}] = ${withoutItem}`
-              });
-            } else {
-              dp[i][j] = withItem;
-              tableSteps.push({
-                type: 'cell', i: i, j: j, value: dp[i][j],
-                message:
-                  `品物 ${i} を入れる場合の価値 = ${withItem}\n→ dp[${i}][${j}] = ${withItem}`
-              });
-            }
-          }
-        }
-      }
-      tableSteps.push({
-        type: 'end',
-        message: `計算完了！ 最大価値は dp[${n}][${W}] = ${dp[n][W]} です。`
-      });
-      return tableSteps;
-    }
-
-    knapInitBtn.addEventListener('click', () => {
-      const wText = knapWeightsInput.value.trim();
-      const vText = knapValuesInput.value.trim();
-      const capText = knapCapacityInput.value.trim();
-      if (!wText || !vText || !capText) {
-        alert('重み・価値・容量 をすべて入力してください。');
-        return;
-      }
-      const weights = wText.split(',').map(s => parseInt(s.trim(), 10));
-      const values  = vText.split(',').map(s => parseInt(s.trim(), 10));
-      const capacity = parseInt(capText, 10);
-      if (
-        weights.length === 0 || values.length === 0 ||
-        weights.length !== values.length ||
-        isNaN(capacity) || capacity < 0 ||
-        weights.some(isNaN) || values.some(isNaN)
-      ) {
-        alert('数値リストの形式が正しくありません。');
-        return;
-      }
-      clearAutoPlay();
-      steps = generateKnapsackSteps(weights, values, capacity);
-      currentIndex = 0;
-
-      while (knapTable.firstChild) knapTable.firstChild.remove();
-      const n = weights.length, W = capacity;
-      for (let r = 0; r <= n + 1; r++) {
-        const tr = document.createElement('tr');
-        for (let c = 0; c <= W + 1; c++) {
-          let cell;
-          if (r === 0 || c === 0) cell = document.createElement('th');
-          else cell = document.createElement('td');
-          if (r >= 1 && c >= 1) {
-            const i = r - 1, j = c - 1;
-            cell.id = `knapTable-cell-${i}-${j}`;
-            cell.textContent = '';
-          }
-          if (r === 0 && c === 0) cell.textContent = '';
-          else if (r === 0 && c >= 2) cell.textContent = c - 1;
-          else if (c === 0 && r >= 2) cell.textContent = r - 1;
-          else if ((r === 0 && c === 1) || (r === 1 && c === 0)) cell.textContent = '';
-          tr.appendChild(cell);
-        }
-        knapTable.appendChild(tr);
-      }
-      renderStep();
-    });
-
-    // ランダム生成（Knapsack）
-    knapRandomBtn.addEventListener('click', () => {
-      const count = Math.floor(Math.random() * 5) + 3;
-      const maxW  = Math.floor(Math.random() * 10) + 5;
-      const maxV  = Math.floor(Math.random() * 10) + 5;
-      const weights = [], values = [];
-      for (let i = 0; i < count; i++) {
-        weights.push(Math.floor(Math.random() * maxW) + 1);
-        values.push(Math.floor(Math.random() * maxV) + 1);
-      }
-      const capacity = Math.floor(weights.reduce((a,b)=>a+b, 0) / 2);
-      knapWeightsInput.value  = weights.join(',');
-      knapValuesInput.value   = values.join(',');
-      knapCapacityInput.value = capacity.toString();
-    });
-
-    // -------------------------------------------------
-    // 3) Sorting
-    // -------------------------------------------------
-    function renderBars(wrapper, array, highlightIndices) {
-      while (wrapper.firstChild) wrapper.firstChild.remove();
-      if (!array || array.length === 0) return;
-      const maxVal = Math.max(...array);
-      array.forEach((val, idx) => {
-        const bar = document.createElement('div');
-        bar.classList.add('bar');
-        const heightPercent = (val / maxVal) * 100;
-        bar.style.height = heightPercent + '%';
-        if (highlightIndices.includes(idx)) bar.classList.add('highlight');
-        wrapper.appendChild(bar);
-      });
-    }
-
-    function generateBubbleSortSteps(arrInput) {
-      const arr = arrInput.slice();
-      const n = arr.length;
-      const steps = [];
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `初期配列: [${arr.join(', ')}]\n隣接要素を比較して交換するバブルソートを実行。`
-      });
-      for (let i = 0; i < n - 1; i++) {
-        for (let j = 0; j < n - 1 - i; j++) {
-          steps.push({
-            type: 'row', row: arr.slice(), highlight: [j, j + 1],
-            message: `比較: インデックス ${j}（値 ${arr[j]}） と ${j+1}（値 ${arr[j+1]}）`
-          });
-          if (arr[j] > arr[j + 1]) {
-            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-            steps.push({
-              type: 'row', row: arr.slice(), highlight: [j, j + 1],
-              message: `交換: ${arr[j]} と ${arr[j + 1]} → [${arr.join(', ')}]`
-            });
-          } else {
-            steps.push({
-              type: 'row', row: arr.slice(), highlight: [j, j + 1],
-              message: `交換不要: ${arr[j]} <= ${arr[j + 1]}`
-            });
-          }
-        }
-        steps.push({
-          type: 'row', row: arr.slice(), highlight: [],
-          message: `パス ${i + 1} 完了: [${arr.join(', ')}]`
-        });
-      }
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `最終ソート完了: [${arr.join(', ')}]`
-      });
-      return steps;
-    }
-
-    function generateQuickSortSteps(arrInput) {
-      const arr = arrInput.slice();
-      const steps = [];
-      function partition(a, low, high) {
-        const pivot = a[high];
-        let i = low - 1;
-        steps.push({
-          type: 'row', row: a.slice(), highlight: [high],
-          message: `パーティション: low=${low}, high=${high}, pivot=${pivot}`
-        });
-        for (let j = low; j < high; j++) {
-          steps.push({
-            type: 'row', row: a.slice(), highlight: [j, high],
-            message: `比較: a[${j}]=${a[j]} と pivot=${pivot}`
-          });
-          if (a[j] < pivot) {
-            i++;
-            [a[i], a[j]] = [a[j], a[i]];
-            steps.push({
-              type: 'row', row: a.slice(), highlight: [i, j],
-              message: `交換: a[${i}] と a[${j}] → [${a.join(', ')}]`
-            });
-          } else {
-            steps.push({
-              type: 'row', row: a.slice(), highlight: [j, high],
-              message: `交換不要: ${a[j]} >= ${pivot}`
-            });
-          }
-        }
-        [a[i + 1], a[high]] = [a[high], a[i + 1]];
-        steps.push({
-          type: 'row', row: a.slice(), highlight: [i + 1, high],
-          message: `pivot を正しい位置 ${i+1} に移動 → [${a.join(', ')}]`
-        });
-        return i + 1;
-      }
-      function quickSortRec(a, low, high) {
-        if (low < high) {
-          const pi = partition(a, low, high);
-          quickSortRec(a, low, pi - 1);
-          quickSortRec(a, pi + 1, high);
-        }
-      }
-      quickSortRec(arr, 0, arr.length - 1);
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `最終ソート完了: [${arr.join(', ')}]`
-      });
-      return steps;
-    }
-
-    function generateMergeSortSteps(arrInput) {
-      const arr = arrInput.slice();
-      const steps = [];
-      function merge(a, l, m, r) {
-        const n1 = m - l + 1;
-        const n2 = r - m;
-        const L = [], R = [];
-        for (let i = 0; i < n1; i++) L.push(a[l + i]);
-        for (let j = 0; j < n2; j++) R.push(a[m + 1 + j]);
-        let i = 0, j = 0, k = l;
-        steps.push({
-          type: 'row', row: a.slice(), highlight: [],
-          message: `マージ: 左=[${L.join(', ')}], 右=[${R.join(', ')}]`
-        });
-        while (i < n1 && j < n2) {
-          steps.push({
-            type: 'row', row: a.slice(), highlight: [k],
-            message: `比較: L[${i}]=${L[i]} と R[${j}]=${R[j]}`
-          });
-          if (L[i] <= R[j]) {
-            a[k] = L[i];
-            steps.push({
-              type: 'row', row: a.slice(), highlight: [k],
-              message: `配置: ${L[i]} を a[${k}] に`
-            });
-            i++;
-          } else {
-            a[k] = R[j];
-            steps.push({
-              type: 'row', row: a.slice(), highlight: [k],
-              message: `配置: ${R[j]} を a[${k}] に`
-            });
-            j++;
-          }
-          k++;
-        }
-        while (i < n1) {
-          a[k] = L[i];
-          steps.push({
-            type: 'row', row: a.slice(), highlight: [k],
-            message: `残った左 ${L[i]} → a[${k}]`
-          });
-          i++; k++;
-        }
-        while (j < n2) {
-          a[k] = R[j];
-          steps.push({
-            type: 'row', row: a.slice(), highlight: [k],
-            message: `残った右 ${R[j]} → a[${k}]`
-          });
-          j++; k++;
-        }
-        steps.push({
-          type: 'row', row: a.slice(), highlight: [],
-          message: `部分配列マージ完了: [${a.slice(l, r + 1).join(', ')}]`
-        });
-      }
-      function mergeSortRec(a, l, r) {
-        if (l < r) {
-          const m = Math.floor((l + r) / 2);
-          mergeSortRec(a, l, m);
-          mergeSortRec(a, m + 1, r);
-          merge(a, l, m, r);
-        }
-      }
-      mergeSortRec(arr, 0, arr.length - 1);
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `最終ソート完了: [${arr.join(', ')}]`
-      });
-      return steps;
-    }
-
-    function generateInsertionSortSteps(arrInput) {
-      const arr = arrInput.slice();
-      const steps = [];
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `初期配列: [${arr.join(', ')}]\n挿入ソートを開始：左側をソート済みとみなし、要素を挿入していきます。`
-      });
-      const n = arr.length;
-      for (let i = 1; i < n; i++) {
-        const key = arr[i];
-        let j = i - 1;
-        steps.push({
-          type: 'row', row: arr.slice(), highlight: [i],
-          message: `挿入対象: インデックス ${i} の ${key} をソート済み部分 [0..${i-1}] に挿入。`
-        });
-        while (j >= 0 && arr[j] > key) {
-          arr[j + 1] = arr[j];
-          steps.push({
-            type: 'row', row: arr.slice(), highlight: [j, j+1],
-            message: `比較: ${arr[j]} > ${key} → 右にシフト → [${arr.join(', ')}]`
-          });
-          j--;
-        }
-        arr[j + 1] = key;
-        steps.push({
-          type: 'row', row: arr.slice(), highlight: [j+1],
-          message: `挿入: ${key} をインデックス ${j+1} に配置 → [${arr.join(', ')}]`
-        });
-      }
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `最終ソート完了（挿入ソート）: [${arr.join(', ')}]`
-      });
-      return steps;
-    }
-
-    function generateSelectionSortSteps(arrInput) {
-      const arr = arrInput.slice();
-      const n = arr.length;
-      const steps = [];
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `初期配列: [${arr.join(', ')}]\n選択ソート開始：未ソート部分から最小値を探し交換します。`
-      });
-      for (let i = 0; i < n - 1; i++) {
-        let minIdx = i;
-        steps.push({
-          type: 'row', row: arr.slice(), highlight: [i],
-          message: `サイクル ${i + 1}: インデックス ${i} を基準に未ソート部分 [${i}..${n-1}] を探索。`
-        });
-        for (let j = i + 1; j < n; j++) {
-          steps.push({
-            type: 'row', row: arr.slice(), highlight: [minIdx, j],
-            message: `比較: arr[${minIdx}]=${arr[minIdx]} と arr[${j}]=${arr[j]}`
-          });
-          if (arr[j] < arr[minIdx]) {
-            minIdx = j;
-            steps.push({
-              type: 'row', row: arr.slice(), highlight: [minIdx],
-              message: `新しい最小値: インデックス ${minIdx} → ${arr[minIdx]}`
-            });
-          }
-        }
-        if (minIdx !== i) {
-          [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
-          steps.push({
-            type: 'row', row: arr.slice(), highlight: [i, minIdx],
-            message: `交換: インデックス ${i} と ${minIdx} → [${arr.join(', ')}]`
-          });
-        } else {
-          steps.push({
-            type: 'row', row: arr.slice(), highlight: [i],
-            message: `交換不要: インデックス ${i} はすでに最小値`
-          });
-        }
-      }
-      steps.push({
-        type: 'row', row: arr.slice(), highlight: [],
-        message: `最終ソート完了（選択ソート）: [${arr.join(', ')}]`
-      });
-      return steps;
-    }
-
-    sortInitBtn.addEventListener('click', () => {
-      const arrText = sortArrayInput.value.trim();
-      if (!arrText) {
-        alert('ソート対象リストを入力してください。');
-        return;
-      }
-      const arr = arrText.split(',').map(s => parseInt(s.trim(), 10));
-      if (arr.some(isNaN)) {
-        alert('形式エラー: 数値リストをカンマ区切りで入力してください。');
-        return;
-      }
-      const algo = sortAlgoSelect.value;
-      clearAutoPlay();
-      switch (algo) {
-        case 'bubble': steps = generateBubbleSortSteps(arr); break;
-        case 'quick':  steps = generateQuickSortSteps(arr);  break;
-        case 'merge':  steps = generateMergeSortSteps(arr);  break;
-        case 'insert': steps = generateInsertionSortSteps(arr); break;
-        case 'select': steps = generateSelectionSortSteps(arr); break;
-        default: steps = [];
-      }
-      currentIndex = 0;
-      if (steps.length > 0 && steps[0].row) renderBars(sortBars, steps[0].row, []);
-      renderStep();
-    });
-
-    // ランダム生成（Sorting）
-    sortRandomBtn.addEventListener('click', () => {
-      const size   = Math.floor(Math.random() * 14) + 5;
-      const maxVal = Math.floor(Math.random() * 90) + 10;
-      const arr = [];
-      for (let i = 0; i < size; i++) {
-        arr.push(Math.floor(Math.random() * maxVal) + 1);
-      }
-      sortArrayInput.value = arr.join(',');
-      renderBars(sortBars, arr, []);
-    });
-
-    // -------------------------------------------------
-    // 4) Searching
-    // -------------------------------------------------
-    function generateLinearSearchSteps(arrInput, key) {
-      const arr = arrInput.slice();
-      const steps = [];
-      for (let i = 0; i < arr.length; i++) {
-        steps.push({
-          type: 'idx', idx: i,
-          message: `線形探索: インデックス ${i} をチェック → 値 = ${arr[i]}`
-        });
-        if (arr[i] === key) {
-          steps.push({
-            type: 'idx', idx: i,
-            message: `キー ${key} をインデックス ${i} で発見！`
-          });
-          return steps;
-        }
-      }
-      steps.push({
-        type: 'idx', idx: -1,
-        message: `探索終了: キー ${key} は配列に存在しません。`
-      });
-      return steps;
-    }
-    function generateBinarySearchSteps(arrInput, key) {
-      const arr = arrInput.slice();
-      const steps = [];
-      let left = 0, right = arr.length - 1;
-      while (left <= right) {
-        const mid = Math.floor((left + right) / 2);
-        steps.push({
-          type: 'idx', idx: mid,
-          message: `2分探索: left=${left}, right=${right}, mid=${mid} → arr[mid] = ${arr[mid]}`
-        });
-        if (arr[mid] === key) {
-          steps.push({
-            type: 'idx', idx: mid,
-            message: `キー ${key} をインデックス ${mid} で発見！`
-          });
-          return steps;
-        } else if (arr[mid] < key) {
-          steps.push({
-            type: 'idx', idx: mid,
-            message: `${arr[mid]} < ${key} → left = ${mid + 1}`
-          });
-          left = mid + 1;
-        } else {
-          steps.push({
-            type: 'idx', idx: mid,
-            message: `(${arr[mid]}) > (${key}) → right = ${mid - 1}`
-          });
-          right = mid - 1;
-        }
-      }
-      steps.push({
-        type: 'idx', idx: -1,
-        message: `探索終了: キー ${key} は配列にありません。`
-      });
-      return steps;
-    }
-    function generateSentinelSearchSteps(arrInput, key) {
-      const arr = arrInput.slice();
-      const steps = [];
-      const n = arr.length;
-      arr.push(key);
-      steps.push({
-        type: 'idx', idx: -1,
-        message: `番兵法: 末尾に ${key} を追加（元長さ = ${n}）。`
-      });
-      for (let i = 0; i < arr.length; i++) {
-        steps.push({
-          type: 'idx', idx: i,
-          message: `チェック: インデックス ${i} → 値 = ${arr[i]}`
-        });
-        if (arr[i] === key) {
-          if (i < n) {
-            steps.push({
-              type: 'idx', idx: i,
-              message: `キー ${key} をインデックス ${i} で発見！`
-            });
-          } else {
-            steps.push({
-              type: 'idx', idx: -1,
-              message: `探索終了: キー ${key} は元配列になし。`
-            });
-          }
-          arr.pop();
-          return steps;
-        }
-      }
-      arr.pop();
-      steps.push({
-        type: 'idx', idx: -1,
-        message: `探索終了: キー ${key} は配列に存在しません。`
-      });
-      return steps;
-    }
-
-    searchInitBtn.addEventListener('click', () => {
-      const arrText = searchArrayInput.value.trim();
-      const keyText = searchKeyInput.value.trim();
-      if (!arrText || !keyText) {
-        alert('配列とキーを入力してください。');
-        return;
-      }
-      const arr = arrText.split(',').map(s => parseInt(s.trim(), 10));
-      const key = parseInt(keyText, 10);
-      if (arr.some(isNaN) || isNaN(key)) {
-        alert('形式エラー: 数値リスト＋キーは数値。');
-        return;
-      }
-      const algo = searchAlgoSelect.value;
-      clearAutoPlay();
-      switch (algo) {
-        case 'linear': steps = generateLinearSearchSteps(arr, key); break;
-        case 'binary': steps = generateBinarySearchSteps(arr, key);  break;
-        case 'sentinel': steps = generateSentinelSearchSteps(arr, key); break;
-        default: steps = [];
-      }
-      currentIndex = 0;
-      renderBars(searchBars, arr, []);
-      renderStep();
-    });
-
-    // ランダム生成（Searching）
-    searchRandomBtn.addEventListener('click', () => {
-      const size   = Math.floor(Math.random() * 14) + 5;
-      const maxVal = Math.floor(Math.random() * 90) + 10;
-      const arr = [];
-      for (let i = 0; i < size; i++) {
-        arr.push(Math.floor(Math.random() * maxVal) + 1);
-      }
-      arr.sort((a,b)=>a-b);
-      const key = arr[Math.floor(Math.random() * arr.length)];
-      searchArrayInput.value = arr.join(',');
-      searchKeyInput.value   = key.toString();
-      renderBars(searchBars, arr, []);
-    });
-
-    function highlightSearchCell(selector, idx) {
-      if (idx < 0) return;
-      const cell = document.querySelector(selector + ' .bar:nth-child(' + (idx + 1) + ')');
-      if (cell) cell.classList.add('highlight');
-    }
-
-    // -------------------------------------------------
-    // 5) Tree／Graph Traversal（DFS/BFS）
-    // -------------------------------------------------
-    function buildAdjacency(n, edgesText) {
-      const adj = Array.from({ length: n + 1 }, () => []);
-      edgesText.split(',').forEach(pair => {
-        const [u, v] = pair.trim().split('-').map(x => parseInt(x, 10));
-        if (!isNaN(u) && !isNaN(v) && u >= 1 && u <= n && v >= 1 && v <= n) {
-          if (!adj[u].includes(v)) adj[u].push(v);
-          if (!adj[v].includes(u)) adj[v].push(u);
-        }
-      });
-      for (let i = 1; i <= n; i++) {
-        adj[i].sort((a, b) => a - b);
-      }
-      return adj;
-    }
-
-    function generateDFSsteps(adj, start) {
-      const n = adj.length - 1;
-      const visited = new Array(n + 1).fill(false);
-      const steps   = [];
-
-      function dfs(u) {
-        visited[u] = true;
-        steps.push({ type: 'visit', node: u, message: `DFS 訪問: ノード ${u}` });
-        for (const v of adj[u]) {
-          if (!visited[v]) {
-            steps.push({ type: 'edge', from: u, to: v, message: `${u} → ${v} へ移動` });
-            dfs(v);
-          }
-        }
-      }
-      dfs(start);
-      steps.push({ type: 'end', message: 'DFS 完了' });
-      return steps;
-    }
-
-    function generateBFSsteps(adj, start) {
-      const n = adj.length - 1;
-      const visited = new Array(n + 1).fill(false);
-      const queue   = [];
-      const steps   = [];
-
-      visited[start] = true;
-      queue.push(start);
-      steps.push({ type: 'visit', node: start, message: `BFS 訪問: ノード ${start}` });
-      while (queue.length > 0) {
-        const u = queue.shift();
-        for (const v of adj[u]) {
-          if (!visited[v]) {
-            visited[v] = true;
-            queue.push(v);
-            steps.push({ type: 'edge', from: u, to: v, message: `${u} → ${v} へ移動` });
-            steps.push({ type: 'visit', node: v, message: `BFS 訪問: ノード ${v}` });
-          }
-        }
-      }
-      steps.push({ type: 'end', message: 'BFS 完了' });
-      return steps;
-    }
-
-    graphInitBtn.addEventListener('click', () => {
-      const n   = parseInt(graph_n.value, 10);
-      const txt = graph_edges.value.trim();
-      const start = parseInt(graph_start.value, 10);
-      if (isNaN(n) || n < 2) { alert('ノード数は 2 以上の整数'); return; }
-      if (isNaN(start) || start < 1 || start > n) { alert('開始ノードを正しく'); return; }
-      clearAutoPlay();
-      const adj = buildAdjacency(n, txt);
-      // 隣接リストをテーブル化
-      while (adjTable.firstChild) adjTable.firstChild.remove();
-      const thead = document.createElement('thead');
-      const trH = document.createElement('tr');
-      trH.innerHTML = '<th>ノード</th><th>隣接リスト</th>';
-      thead.appendChild(trH);
-      adjTable.appendChild(thead);
-      const tbody = document.createElement('tbody');
-      for (let u = 1; u <= n; u++) {
-        const tr = document.createElement('tr');
-        const td1 = document.createElement('td');
-        td1.textContent = u;
-        const td2 = document.createElement('td');
-        td2.textContent = adj[u].join(', ');
-        td2.id = `adj-${u}`;
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tbody.appendChild(tr);
-      }
-      adjTable.appendChild(tbody);
-
-      const algo = graphAlgoSelect.value;
-      if (algo === 'dfs') steps = generateDFSsteps(adj, start);
-      else if (algo === 'bfs') steps = generateBFSsteps(adj, start);
-      else steps = [];
-      currentIndex = 0;
-      renderStep();
-    });
-
-    // ランダム生成（Graph）
-    graphRandomBtn.addEventListener('click', () => {
-      const n = Math.floor(Math.random() * 6) + 5; // 5～10 ノード
-      const edges = [];
-      for (let u = 1; u <= n; u++) {
-        const degree = Math.floor(Math.random() * 3); // 0～2 本の辺
-        for (let k = 0; k < degree; k++) {
-          const v = Math.floor(Math.random() * n) + 1;
-          if (v !== u) {
-            const pair = u < v ? `${u}-${v}` : `${v}-${u}`;
-            if (!edges.includes(pair)) edges.push(pair);
-          }
-        }
-      }
-      graph_n.value = n;
-      graph_edges.value = edges.join(',');
-      graph_start.value = '1';
-    });
-
-    function highlightGraphNode(idx) {
-      clearDistinctHighlights('#adjTable');
-      const td = document.getElementById(`adj-${idx}`);
-      if (td) td.classList.add('highlight');
-    }
-
-    // -------------------------------------------------
-    // 6) 線形計画法（単純形法）
-    // -------------------------------------------------
-    function parseLPinput(text) {
-      const lines = text.trim().split('\n').map(l => l.trim()).filter(l => l);
-      const objLine = lines.shift();
-      const coef = {};
-      objLine.replace(/maximize\s*/i, '').split(/\s*\+\s*/).forEach(term => {
-        const m = term.match(/([\d]+)([a-zA-Z]+)/);
-        if (m) {
-          coef[m[2]] = parseInt(m[1], 10);
-        }
-      });
-      const constraints = [];
-      for (const line of lines) {
-        if (/≤/.test(line) || /<=/.test(line)) {
-          const parts = line.replace(/≤/g, '<=').split('<='); 
-          const lhs = parts[0].trim();
-          const rhs = parts[1].trim();
-          const row = {};
-          lhs.split(/\s*\+\s*/).forEach(term => {
-            const m = term.match(/([\d]+)([a-zA-Z]+)/);
-            if (m) row[m[2]] = parseInt(m[1], 10);
-          });
-          constraints.push({ coef: row, bound: parseInt(rhs, 10) });
-        }
-      }
-      return { obj: coef, cons: constraints };
-    }
-
-    function generateSimplexSteps(lp) {
-      const { obj, cons } = lp;
-      const vars = Object.keys(obj);
-      const m = cons.length;
-      const steps = [];
-
-      // 1) 初期単純形表を構築
-      const header = [...vars, ...cons.map((_, i) => 's' + (i + 1)), '解', '基底'];
-      const table0 = [header];
-      for (let i = 0; i < m; i++) {
-        const row = [];
-        const ci = cons[i];
-        for (const v of vars) row.push(ci.coef[v] || 0);
-        for (let j = 0; j < m; j++) row.push(i === j ? 1 : 0);
-        row.push(ci.bound);
-        row.push('s' + (i + 1));
-        table0.push(row);
-      }
-      const objRow = [];
-      for (const v of vars) objRow.push(- (obj[v] || 0));
-      for (let j = 0; j < m; j++) objRow.push(0);
-      objRow.push(0);
-      objRow.push('');
-      table0.push(objRow);
-
-      steps.push({ type: 'table', table: table0, highlight: [], message: '初期単純形表（標準形）の構築' });
-
-      // 2) 簡易版：詳細ピボットステップは省略
-      steps.push({ type: 'end', message: '（ここでは簡易化のため、単純形法の詳細ステップは省略）' });
-      return steps;
-    }
-
-    lpInitBtn.addEventListener('click', () => {
-      const txt = lp_input.value.trim();
-      if (!txt) { alert('LP の定義を入力してください。'); return; }
-      clearAutoPlay();
-      const lp = parseLPinput(txt);
-      steps = generateSimplexSteps(lp);
-      currentIndex = 0;
-
-      while (simplexTable.firstChild) simplexTable.firstChild.remove();
-      if (steps.length > 0 && steps[0].type === 'table') {
-        const tbl = steps[0].table;
-        for (let r = 0; r < tbl.length; r++) {
-          const tr = document.createElement('tr');
-          for (let c = 0; c < tbl[r].length; c++) {
-            const cell = document.createElement(r === 0 ? 'th' : 'td');
-            cell.textContent = tbl[r][c];
-            tr.appendChild(cell);
-          }
-          simplexTable.appendChild(tr);
-        }
-      }
-      renderStep();
-    });
-
-    // ランダム生成（LP）
-    lpRandomBtn.addEventListener('click', () => {
-      const txt =
-`maximize 3x + 2y
-s.t.
- x +  y ≤ 5
-2x + 3y ≤ 12
- x ≤ 3
- y ≤ 4`;
-      lp_input.value = txt;
-    });
-
-    // -------------------------------------------------
-    // 7) ハッシュ法（オープンアドレス法）
-    // -------------------------------------------------
-    function generateOpenAddressingSteps(m, keys) {
-      const table = new Array(m).fill(null);
-      const steps = [];
-      for (const k of keys) {
-        let h = k % m;
-        let i = 0;
-        steps.push({ type: 'attempt', key: k, idx: h, message: `キー ${k} をハッシュ → h = ${k} mod ${m} = ${h}` });
-        while (i < m) {
-          const slot = (h + i) % m;
-          steps.push({ type: 'probe', slot, message: `プローブ: idx = (${h} + ${i}) mod ${m} = ${slot}` });
-          if (table[slot] === null) {
-            table[slot] = k;
-            steps.push({ type: 'insert', slot, key: k, message: `挿入: スロット ${slot} に ${k}` });
-            break;
-          } else {
-            steps.push({ type: 'collision', slot, message: `衝突: スロット ${slot} は既に ${table[slot]}` });
-            i++;
-          }
-        }
-        if (i >= m) {
-          steps.push({ type: 'full', message: `テーブルは満杯：キー ${k} を挿入できませんでした。` });
-        }
-        steps.push({ type: 'step_end', message: `キー ${k} の処理完了` });
-      }
-      steps.push({ type: 'end', message: `すべてのキー挿入完了` });
-      return { steps, finalTable: table };
-    }
-
-    hashInitBtn.addEventListener('click', () => {
-      const m = parseInt(hash_m.value, 10);
-      const keysText = hash_keys.value.trim();
-      if (isNaN(m) || m < 2) { alert('テーブルサイズ m は 2 以上の整数'); return; }
-      if (!keysText) { alert('キー列を入力してください。'); return; }
-      const keys = keysText.split(',').map(s => parseInt(s.trim(), 10)).filter(x => !isNaN(x));
-      clearAutoPlay();
-      const result = generateOpenAddressingSteps(m, keys);
-      steps = result.steps;
-      hashTableState = new Array(m).fill(null);
-      currentIndex = 0;
-
-      while (hashContainer.firstChild) hashContainer.firstChild.remove();
-      for (let i = 0; i < m; i++) {
-        const slot = document.createElement('div');
-        slot.classList.add('hash-slot', 'empty');
-        slot.id = `hash-slot-${i}`;
-        slot.textContent = '';
-        hashContainer.appendChild(slot);
-      }
-      renderStep();
-    });
-
-    hashRandomBtn.addEventListener('click', () => {
-      const m = Math.floor(Math.random() * 7) + 5; // 5～11
-      const count = Math.floor(Math.random() * (m - 1)) + 1;
-      const keys = [];
-      for (let i = 0; i < count; i++) {
-        keys.push(Math.floor(Math.random() * 50) + 1);
-      }
-      hash_m.value = m.toString();
-      hash_keys.value = keys.join(',');
-      while (hashContainer.firstChild) hashContainer.firstChild.remove();
-      for (let i = 0; i < m; i++) {
-        const slot = document.createElement('div');
-        slot.classList.add('hash-slot', 'empty');
-        slot.id = `hash-slot-${i}`;
-        hashContainer.appendChild(slot);
-      }
-      hashTableState = new Array(m).fill(null);
-    });
-
-    function renderHashTable(table, highlightSlot, confirmedSlots) {
-      for (let i = 0; i < table.length; i++) {
-        const slotElem = document.getElementById(`hash-slot-${i}`);
-        if (!slotElem) continue;
-        slotElem.className = 'hash-slot';
-        if (table[i] === null) {
-          slotElem.classList.add('empty');
-          slotElem.textContent = '';
-        } else {
-          slotElem.textContent = table[i];
-        }
-        if (highlightSlot === i) {
-          slotElem.classList.add('highlight');
-        }
-        if (confirmedSlots.includes(i)) {
-          slotElem.classList.add('confirmed');
-        }
-      }
-    }
-
-    // -------------------------------------------------
-    // renderStep：すべてのアルゴリズムに対応
-    // -------------------------------------------------
-    function renderStep() {
-      if (!steps || steps.length === 0 || currentIndex < 0 || currentIndex >= steps.length) {
-        updateProgress();
-        return;
-      }
-      const step = steps[currentIndex];
-
-      clearDistinctHighlights('#editTable');
-      clearDistinctHighlights('#knapTable');
-      clearDistinctHighlights('#sortBars');
-      clearDistinctHighlights('#searchBars');
-      clearDistinctHighlights('#adjTable');
-      clearDistinctHighlights('#simplexTable');
-      clearDistinctHighlights('#hashContainer');
-
-      // 1) Edit Distance
-      if (editControls.style.display === 'block') {
-        if (step.type === 'cell') {
-          const cell = document.getElementById(`editTable-cell-${step.i}-${step.j}`);
-          if (cell) {
-            cell.textContent = step.value;
-            cell.classList.add('highlight');
-          }
-          editDesc.textContent = step.message;
-        } else if (step.type === 'end') {
-          editDesc.textContent = step.message;
-        }
-      }
-
-      // 2) Knapsack
-      else if (knapControls.style.display === 'block') {
-        if (step.type === 'cell') {
-          const cell = document.getElementById(`knapTable-cell-${step.i}-${step.j}`);
-          if (cell) {
-            cell.textContent = step.value;
-            cell.classList.add('highlight');
-          }
-          knapDesc.textContent = step.message;
-        } else if (step.type === 'end') {
-          knapDesc.textContent = step.message;
-        }
-      }
-
-      // 3) Sorting（バー表示）
-      else if (sortControls.style.display === 'block') {
-        if (step.type === 'row') {
-          renderBars(sortBars, step.row, step.highlight);
-          sortDesc.textContent = step.message;
-        }
-      }
-
-      // 4) Searching（バー表示）
-      else if (searchControls.style.display === 'block') {
-        if (step.type === 'idx') {
-          highlightSearchCell('#searchBars', step.idx);
-          searchDesc.textContent = step.message;
-        }
-      }
-
-      // 5) Tree/Graph Traversal
-      else if (graphControls.style.display === 'block') {
-        if (step.type === 'visit') {
-          highlightGraphNode(step.node);
-          graphDesc.textContent = step.message;
-        } else if (step.type === 'edge') {
-          highlightGraphNode(step.to);
-          graphDesc.textContent = step.message;
-        } else if (step.type === 'end') {
-          graphDesc.textContent = step.message;
-        }
-      }
-
-      // 6) LP（単純形法）
-      else if (lpControls.style.display === 'block') {
-        if (step.type === 'table') {
-          lpDesc.textContent = step.message;
-        } else if (step.type === 'end') {
-          lpDesc.textContent = step.message;
-        }
-      }
-
-      // 7) Hash（Open Addressing）
-      else if (hashControls.style.display === 'block') {
-        if (step.type === 'attempt') {
-          hashDesc.textContent = step.message;
-        } else if (step.type === 'probe') {
-          renderHashTable(hashTableState, step.slot, []);
-          hashDesc.textContent = step.message;
-        } else if (step.type === 'insert') {
-          hashTableState[step.slot] = step.key;
-          renderHashTable(hashTableState, step.slot, [step.slot]);
-          hashDesc.textContent = step.message;
-        } else if (step.type === 'collision') {
-          renderHashTable(hashTableState, step.slot, []);
-          hashDesc.textContent = step.message;
-        } else if (step.type === 'step_end') {
-          hashDesc.textContent = step.message;
-        } else if (step.type === 'end') {
-          hashDesc.textContent = step.message;
-        }
-      }
-
-      updateStepButtons();
-      updateProgress();
-    }
-
-    // -------------------------------------------------
-    // イニシャライズ系イベントの紐付け
-    // -------------------------------------------------
-
-    // Edit Distance
-    editPrevBtn.addEventListener('click', onPrevStep);
-    editNextBtn.addEventListener('click', onNextStep);
-    editAutoBtn.addEventListener('click', toggleAutoPlay);
-
-    // Knapsack
-    knapPrevBtn.addEventListener('click', onPrevStep);
-    knapNextBtn.addEventListener('click', onNextStep);
-    knapAutoBtn.addEventListener('click', toggleAutoPlay);
-
-    // Sorting
-    sortPrevBtn.addEventListener('click', onPrevStep);
-    sortNextBtn.addEventListener('click', onNextStep);
-    sortAutoBtn.addEventListener('click', toggleAutoPlay);
-
-    // Searching
-    searchPrevBtn.addEventListener('click', onPrevStep);
-    searchNextBtn.addEventListener('click', onNextStep);
-    searchAutoBtn.addEventListener('click', toggleAutoPlay);
-
-    // Graph
-    graphPrevBtn.addEventListener('click', onPrevStep);
-    graphNextBtn.addEventListener('click', onNextStep);
-    graphAutoBtn.addEventListener('click', toggleAutoPlay);
-
-    // LP
-    lpPrevBtn.addEventListener('click', onPrevStep);
-    lpNextBtn.addEventListener('click', onNextStep);
-    lpAutoBtn.addEventListener('click', toggleAutoPlay);
-
-    // Hash
-    hashPrevBtn.addEventListener('click', onPrevStep);
-    hashNextBtn.addEventListener('click', onNextStep);
-    hashAutoBtn.addEventListener('click', toggleAutoPlay);
-
-    // 初期表示：非表示化
-    algoSelect.dispatchEvent(new Event('change'));
-  </script>
+  <!-- 外部JS を読み込む -->
+  <script src="js/main.js"></script>
 </body>
 </html>
