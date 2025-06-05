@@ -1,311 +1,437 @@
 /* ─────────────────────────────────────────
-   全体レイアウト
+   全体リセット＆ベーススタイル
 ───────────────────────────────────────── */
-body {
-  font-family: "メイリオ", sans-serif;
+* {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+  color: #334e68;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─────────────────────────────────────────
+   ヘッダー
+───────────────────────────────────────── */
 .header {
-  background-color: #004d99;
-  padding: 16px;
+  background: linear-gradient(90deg, #0061a8, #004e89);
+  padding: 24px 16px;
   text-align: center;
-  color: #fff;
-  font-size: 24px;
+  color: #ffffff;
+  border-bottom: 4px solid #012a4a;
+}
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 .subtitle {
-  font-size: 14px;
-  color: #e0e0e0;
+  font-size: 1rem;
+  color: #cfdce6;
 }
 
+/* ─────────────────────────────────────────
+   コンテナとセクション
+───────────────────────────────────────── */
 .container {
-  max-width: 1100px;
-  margin: 20px auto;
+  max-width: 1200px;
+  margin: 24px auto;
   padding: 0 16px;
 }
 
-/* ─────────────────────────────────────────
-   セクション見出し・区切り線
-───────────────────────────────────────── */
+/* セクション */
 .section {
-  background-color: #fff;
-  border-radius: 6px;
-  margin-bottom: 24px;
-  padding: 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+.section:hover {
+  transform: translateY(-4px);
 }
 .section-title {
-  margin-top: 0;
-  color: #004d99;
-  font-size: 20px;
-  border-bottom: 2px solid #004d99;
-  padding-bottom: 4px;
+  font-size: 1.5rem;
+  color: #102a43;
+  font-weight: 600;
+  margin-bottom: 16px;
+  position: relative;
+}
+.section-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: #0061a8;
+  margin-top: 4px;
+  border-radius: 2px;
 }
 
-/* ─────────────────────────────────────────
-   共通フォーム・ボタンスタイル
-───────────────────────────────────────── */
+/* ラベル */
+.label {
+  font-size: 0.9rem;
+  color: #334e68;
+  display: flex;
+  align-items: center;
+}
+
+/* 入力欄 */
+.input {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border: 2px solid #bcccdc;
+  border-radius: 6px;
+  margin-left: 8px;
+  width: 200px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input:focus {
+  border-color: #0061a8;
+  box-shadow: 0 0 6px rgba(0, 97, 168, 0.3);
+  outline: none;
+}
+textarea.input {
+  width: 260px;
+  resize: vertical;
+}
+
+/* セレクトボックス */
+.select, .speed-select {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border: 2px solid #bcccdc;
+  border-radius: 6px;
+  margin-left: 8px;
+  background-color: #ffffff;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20viewBox%3D%220%200%2010%207%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L0%200h10L5%207z%22%20fill%3D%22%23334E68%22/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px 7px;
+}
+.select:focus, .speed-select:focus {
+  border-color: #0061a8;
+  box-shadow: 0 0 6px rgba(0, 97, 168, 0.3);
+  outline: none;
+}
+
+/* ボタン */
+.btn {
+  background: linear-gradient(90deg, #0084d1, #0061a8);
+  color: #ffffff;
+  font-size: 0.95rem;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.btn:hover:not(:disabled) {
+  background: linear-gradient(90deg, #0095e7, #0073b0);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  background-color: #a3b3c5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* コントロール群 */
 .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.label {
-  font-size: 14px;
-  color: #333;
-}
-.input {
-  padding: 6px 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 180px;
-  margin-left: 4px;
-}
-textarea.input {
-  width: 240px;
-}
-.select, .speed-select {
-  padding: 6px 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-left: 4px;
-}
-.btn {
-  background-color: #004d99;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.btn:disabled {
-  background-color: #999;
-  cursor: default;
-}
-.btn:not(:disabled):hover {
-  background-color: #003366;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: center;
 }
 
-/* ─────────────────────────────────────────
-   ステップ制御ボタン
-───────────────────────────────────────── */
+/* ステップ制御ボタン */
 .step-controls {
   display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 12px;
 }
 .progress {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #495670;
+  margin-bottom: 12px;
 }
 
-/* ─────────────────────────────────────────
-   説明文
-───────────────────────────────────────── */
+/* 説明文 */
 .description {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  color: #334e68;
+  background-color: #f0f4f8;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #0061a8;
   white-space: pre-wrap;
+  line-height: 1.4;
 }
 
-/* ─────────────────────────────────────────
-   色の凡例
-───────────────────────────────────────── */
+/* 色の凡例 */
 .legend {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 .legend-items {
   display: flex;
-  gap: 16px;
-  margin-top: 8px;
+  gap: 24px;
+  margin-top: 12px;
 }
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .legend-color {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #666;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #495670;
   border-radius: 4px;
 }
 .legend-color.normal {
-  background-color: #fff;
+  background-color: #ffffff;
 }
 .legend-color.highlight {
-  background-color: #ffeb3b; /* 黄色 */
+  background-color: #ffeb3b;
 }
 .legend-color.confirmed {
-  background-color: #4caf50; /* 緑色 */
+  background-color: #4caf50;
 }
 
 /* ─────────────────────────────────────────
-   テーブル（DP テーブル、トレリス、シンプル表、ハッシュ）
+   テーブル（DP テーブル、トレリス、シンプル表）
 ───────────────────────────────────────── */
 
-/* ■ DP やトレリス用テーブル */
+/* テーブル共通 */
 .table-wrapper {
   overflow-x: auto;
-  margin-bottom: 16px;
+  margin-top: 12px;
+  margin-bottom: 24px;
+  border-radius: 8px;
 }
 
+/* トレリス用テーブル */
 .trellis-table {
   border-collapse: collapse;
-  position: relative;
   margin: 0 auto;
+  background-color: #ffffff;
+  position: relative;
+  /* 余白を与えても少しだけスタイルが見えるように padding を切り出し */
+  padding: 4px;
 }
 .trellis-table th,
 .trellis-table td {
-  border: 1px solid #bbb;
+  border: 1px solid #d9e2ec;
   width: 60px;
   height: 60px;
   position: relative;
-  background-color: #fff;
+  background-color: #ffffff;
+  transition: background 0.2s ease;
+  overflow: hidden;
 }
-/* 斜めグリッド線 */
 .trellis-table td::before,
 .trellis-table th::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(45deg, rgba(200,200,200,0.3) 25%, transparent 25%, transparent 75%, rgba(200,200,200,0.3) 75%, rgba(200,200,200,0.3)),
-                    linear-gradient(45deg, rgba(200,200,200,0.3) 25%, transparent 25%, transparent 75%, rgba(200,200,200,0.3) 75%, rgba(200,200,200,0.3));
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image:
+    linear-gradient(135deg, rgba(220, 230, 240, 0.4) 25%, transparent 25%),
+    linear-gradient(135deg, rgba(220, 230, 240, 0.4) 25%, transparent 25%);
   background-size: 12px 12px;
   background-position: 0 0, 6px 6px;
   pointer-events: none;
   z-index: 1;
 }
 
-/* セル内の丸を描く */
-.trellis-table td .circle,
-.trellis-table th .circle {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  top: calc(50% - 12px);
-  left: calc(50% - 12px);
-  z-index: 2;
-  opacity: 0.9;
+.trellis-table td:hover {
+  background-color: rgba(0, 97, 168, 0.08);
 }
-
-/* 通常セル */
-.trellis-table td {
-  background-color: #fff;
-}
-/* 現在更新中セル */
-.trellis-table td.highlight {
-  background-color: #ffeb3b; /* 黄色背景 */
-}
-/* 確定セル */
-.trellis-table td.confirmed {
-  background-color: #4caf50; /* 緑背景 */
-}
-
-/* 値をセル内に表示 */
-.trellis-table td .value-label {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  font-size: 12px;
-  z-index: 3;
-  color: #000;
-}
-
-/* ヘッダーセル */
 .trellis-table th {
-  background-color: #e0e0e0;
-  border: 1px solid #aaa;
+  background-color: #f0f4f8;
+  border: 1px solid #cbd6e2;
   text-align: center;
-  font-size: 14px;
-  font-weight: normal;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334e68;
 }
-
-/* 時間軸ラベルを縦書きで */
 .trellis-header {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-size: 12px;
-  color: #333;
+  font-size: 0.8rem;
+  color: #334e68;
 }
 
-/* ■ ソート／探索のバー表示 */
-.bars-wrapper {
-  display: flex;
-  align-items: flex-end;
-  height: 200px;
-  margin-bottom: 12px;
-  gap: 2px;
+/* 現在更新中セル */
+.trellis-table td.highlight {
+  background-color: rgba(254, 243, 199, 0.9);
 }
-.bar {
-  width: 20px;
-  background-color: #2196F3;
-  transition: background-color 0.2s;
+/* 確定セル */
+.trellis-table td.confirmed {
+  background-color: rgba(76, 175, 80, 0.2);
 }
-.bar.highlight {
+
+/* セル内の丸 */
+.trellis-table td .circle,
+.trellis-table th .circle {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  top: calc(50% - 14px);
+  left: calc(50% - 14px);
+  z-index: 2;
+  opacity: 0.9;
+}
+.trellis-table td.highlight .circle {
   background-color: #ffeb3b;
 }
-.bar.confirmed {
+.trellis-table td.confirmed .circle {
   background-color: #4caf50;
 }
+.trellis-table .value-label {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 0.8rem;
+  z-index: 3;
+  color: #112d4e;
+}
 
-/* ■ シンプル表 (LP) */
+/* シンプル表 (LP) */
 .simplex-table {
   border-collapse: collapse;
-  margin: 0 auto 16px auto;
+  margin: 16px auto 24px auto;
+  width: 100%;
 }
 .simplex-table th,
 .simplex-table td {
-  border: 1px solid #444;
-  padding: 6px 12px;
+  border: 1px solid #91aace;
+  padding: 8px 12px;
   text-align: center;
-  font-family: monospace;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.85rem;
+  background-color: #f8fafc;
+  transition: background 0.2s ease;
 }
-/* ヘッダー */
 .simplex-table th {
-  background-color: #ddd;
+  background-color: #e0ebf5;
+  color: #334e68;
+  font-weight: 600;
 }
 
-/* ■ ハッシュテーブル */
+/* テーブル内セルのホバーエフェクト */
+.simplex-table td:hover {
+  background-color: #edf2f7;
+}
+
+/* ─────────────────────────────────────────
+   ソート／探索 のバー表示
+───────────────────────────────────────── */
+.bars-wrapper {
+  display: flex;
+  align-items: flex-end;
+  height: 240px;
+  margin-bottom: 24px;
+  gap: 4px;
+  padding: 8px 4px;
+  background-color: #f0f4f8;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+.bar {
+  flex: 1;
+  background: linear-gradient(180deg, #5bc0eb 0%, #0061a8 100%);
+  border-radius: 4px 4px 0 0;
+  transition: background 0.2s ease, transform 0.1s ease;
+  position: relative;
+}
+.bar:hover {
+  transform: translateY(-4px);
+}
+.bar.highlight {
+  background: linear-gradient(180deg, #ffeb3b 0%, #ffeb3b 100%);
+}
+.bar.confirmed {
+  background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
+}
+
+/* ─────────────────────────────────────────
+   ハッシュテーブル
+───────────────────────────────────────── */
 .hash-container {
   display: flex;
-  gap: 4px;
-  margin-bottom: 12px;
   flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
 }
 .hash-slot {
-  width: 60px;
+  width: 80px;
   height: 60px;
-  border: 1px solid #444;
+  border: 2px dashed #a3b3c5;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-family: monospace;
-  background-color: #fff;
-  transition: background-color 0.2s;
+  font-size: 0.95rem;
+  font-family: "Courier New", monospace;
+  background-color: #fafafa;
+  border-radius: 6px;
+  position: relative;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 .hash-slot.empty {
-  background-color: #fff;
+  color: #a3b3c5;
+}
+.hash-slot:hover {
+  border-color: #0061a8;
+  background-color: rgba(0, 97, 168, 0.05);
 }
 .hash-slot.highlight {
-  background-color: #ffeb3b; /* 黄色 */
+  background-color: rgba(254, 243, 199, 0.9);
+  border-color: #ffeb3b;
 }
 .hash-slot.confirmed {
-  background-color: #4caf50; /* 緑 */
+  background-color: rgba(76, 175, 80, 0.2);
+  border-color: #4caf50;
 }
 
-/* メディアクエリなどが必要なら追加可能 */
+/* ─────────────────────────────────────────
+   メディアクエリ (レスポンシブ)
+───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .input, .select, .speed-select {
+    width: 100%;
+  }
+  .legend-items {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .bars-wrapper {
+    height: 180px;
+  }
+  .hash-slot {
+    width: 60px;
+    height: 50px;
+    font-size: 0.85rem;
+  }
+}
