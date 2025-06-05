@@ -142,27 +142,27 @@ textarea.input {
 .legend-color.normal {
   background-color: #fff;
 }
-.legend-color.current {
+.legend-color.highlight {
   background-color: #ffeb3b; /* 黄色 */
 }
-.legend-color.path {
+.legend-color.confirmed {
   background-color: #4caf50; /* 緑色 */
 }
 
 /* ─────────────────────────────────────────
-   テーブル（トレリス）共通
+   テーブル（DP テーブル、トレリス、シンプル表、ハッシュ）
 ───────────────────────────────────────── */
+
+/* ■ DP やトレリス用テーブル */
 .table-wrapper {
   overflow-x: auto;
   margin-bottom: 16px;
 }
 
-/* ○ トレリス用テーブル */
 .trellis-table {
   border-collapse: collapse;
   position: relative;
   margin: 0 auto;
-  /* 背景に斜め線を引くための工夫 */
 }
 .trellis-table th,
 .trellis-table td {
@@ -172,7 +172,7 @@ textarea.input {
   position: relative;
   background-color: #fff;
 }
-/* 斜めのグリッド線を表示する */
+/* 斜めグリッド線 */
 .trellis-table td::before,
 .trellis-table th::before {
   content: "";
@@ -189,7 +189,7 @@ textarea.input {
   z-index: 1;
 }
 
-/* セルの中に丸を描く */
+/* セル内の丸を描く */
 .trellis-table td .circle,
 .trellis-table th .circle {
   position: absolute;
@@ -202,20 +202,20 @@ textarea.input {
   opacity: 0.9;
 }
 
-/* 通常セル（白） */
+/* 通常セル */
 .trellis-table td {
   background-color: #fff;
 }
-/* 現在更新中セルは黄色の円を表示 */
-.trellis-table td.current .circle {
-  background-color: #ffeb3b; /* 黄色 */
+/* 現在更新中セル */
+.trellis-table td.highlight {
+  background-color: #ffeb3b; /* 黄色背景 */
 }
-/* 確定経路セルは緑色の円を表示 */
-.trellis-table td.path .circle {
-  background-color: #4caf50; /* 緑 */
+/* 確定セル */
+.trellis-table td.confirmed {
+  background-color: #4caf50; /* 緑背景 */
 }
 
-/* セルに値をテキスト表示（オプション） */
+/* 値をセル内に表示 */
 .trellis-table td .value-label {
   position: absolute;
   top: 4px;
@@ -225,7 +225,7 @@ textarea.input {
   color: #000;
 }
 
-/* ヘッダー行・列のスタイル */
+/* ヘッダーセル */
 .trellis-table th {
   background-color: #e0e0e0;
   border: 1px solid #aaa;
@@ -234,7 +234,7 @@ textarea.input {
   font-weight: normal;
 }
 
-/* 時間軸ラベルを斜めに */
+/* 時間軸ラベルを縦書きで */
 .trellis-header {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
@@ -242,5 +242,70 @@ textarea.input {
   color: #333;
 }
 
-/* 矢印を描きたい場合 (擬似要素で線を描画) */
-/* ここでは円のみを描画し、矢印は省略します。 */
+/* ■ ソート／探索のバー表示 */
+.bars-wrapper {
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+  margin-bottom: 12px;
+  gap: 2px;
+}
+.bar {
+  width: 20px;
+  background-color: #2196F3;
+  transition: background-color 0.2s;
+}
+.bar.highlight {
+  background-color: #ffeb3b;
+}
+.bar.confirmed {
+  background-color: #4caf50;
+}
+
+/* ■ シンプル表 (LP) */
+.simplex-table {
+  border-collapse: collapse;
+  margin: 0 auto 16px auto;
+}
+.simplex-table th,
+.simplex-table td {
+  border: 1px solid #444;
+  padding: 6px 12px;
+  text-align: center;
+  font-family: monospace;
+}
+/* ヘッダー */
+.simplex-table th {
+  background-color: #ddd;
+}
+
+/* ■ ハッシュテーブル */
+.hash-container {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.hash-slot {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: monospace;
+  background-color: #fff;
+  transition: background-color 0.2s;
+}
+.hash-slot.empty {
+  background-color: #fff;
+}
+.hash-slot.highlight {
+  background-color: #ffeb3b; /* 黄色 */
+}
+.hash-slot.confirmed {
+  background-color: #4caf50; /* 緑 */
+}
+
+/* メディアクエリなどが必要なら追加可能 */
