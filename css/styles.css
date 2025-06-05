@@ -1,303 +1,246 @@
-:root {
-  --primary-color: #2c3e50;
-  --secondary-color: #f5f7fa;
-  --accent-color: #1abc9c;
-  --highlight-color: #f39c12;
-  --confirmed-color: #27ae60;
-  --text-color: #2c3e50;
-  --card-bg: #ffffff;
-  --shadow-color: rgba(0, 0, 0, 0.08);
-  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-}
-
+/* ─────────────────────────────────────────
+   全体レイアウト
+───────────────────────────────────────── */
 body {
+  font-family: "メイリオ", sans-serif;
   margin: 0;
   padding: 0;
-  font-family: var(--font-family);
-  background-color: var(--secondary-color);
-  color: var(--text-color);
+  background-color: #f4f4f4;
 }
 
-/* ===== ヘッダー ===== */
 .header {
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  padding: 20px 24px;
+  background-color: #004d99;
+  padding: 16px;
   text-align: center;
+  color: #fff;
   font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 4px var(--shadow-color);
 }
-.header .subtitle {
+.subtitle {
   font-size: 14px;
-  display: block;
-  margin-top: 4px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #e0e0e0;
 }
 
-/* ===== メインコンテナ ===== */
 .container {
-  max-width: 960px;
-  margin: 24px auto;
+  max-width: 1100px;
+  margin: 20px auto;
   padding: 0 16px;
 }
 
-/* ===== 各セクションのカードスタイル ===== */
+/* ─────────────────────────────────────────
+   セクション見出し・区切り線
+───────────────────────────────────────── */
 .section {
-  margin-bottom: 32px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px var(--shadow-color);
+  background-color: #fff;
+  border-radius: 6px;
+  margin-bottom: 24px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .section-title {
-  margin: 0 0 16px;
+  margin-top: 0;
+  color: #004d99;
   font-size: 20px;
-  color: var(--primary-color);
-  border-bottom: 2px solid var(--accent-color);
-  padding-bottom: 8px;
+  border-bottom: 2px solid #004d99;
+  padding-bottom: 4px;
 }
 
-/* ===== 色の凡例 ===== */
+/* ─────────────────────────────────────────
+   共通フォーム・ボタンスタイル
+───────────────────────────────────────── */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.label {
+  font-size: 14px;
+  color: #333;
+}
+.input {
+  padding: 6px 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 180px;
+  margin-left: 4px;
+}
+textarea.input {
+  width: 240px;
+}
+.select, .speed-select {
+  padding: 6px 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+.btn {
+  background-color: #004d99;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn:disabled {
+  background-color: #999;
+  cursor: default;
+}
+.btn:not(:disabled):hover {
+  background-color: #003366;
+}
+
+/* ─────────────────────────────────────────
+   ステップ制御ボタン
+───────────────────────────────────────── */
+.step-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.progress {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+/* ─────────────────────────────────────────
+   説明文
+───────────────────────────────────────── */
+.description {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ─────────────────────────────────────────
+   色の凡例
+───────────────────────────────────────── */
+.legend {
+  margin-bottom: 24px;
+}
 .legend-items {
   display: flex;
-  gap: 24px;
-  align-items: center;
-  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
 }
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
 }
 .legend-color {
   width: 20px;
   height: 20px;
+  border: 1px solid #666;
   border-radius: 4px;
-  border: 1px solid #888;
 }
 .legend-color.normal {
-  background-color: var(--accent-color);
+  background-color: #fff;
 }
-.legend-color.highlight {
-  background-color: var(--highlight-color);
+.legend-color.current {
+  background-color: #ffeb3b; /* 黄色 */
 }
-.legend-color.confirmed {
-  background-color: var(--confirmed-color);
+.legend-color.path {
+  background-color: #4caf50; /* 緑色 */
 }
 
-/* ===== 入力フォーム・ボタン ===== */
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
+/* ─────────────────────────────────────────
+   テーブル（トレリス）共通
+───────────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto;
   margin-bottom: 16px;
 }
-.label {
-  font-size: 14px;
-  flex: 1 1 220px;
-  display: flex;
-  flex-direction: column;
-}
-.input, .select, textarea {
-  margin-top: 6px;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  background-color: #fff;
-  color: var(--text-color);
-  width: 100%;
-}
-.textarea {
-  resize: vertical;
-}
-.btn {
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #fff;
-  background-color: var(--accent-color);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-}
-.btn:hover {
-  background-color: #16a085;
-  transform: translateY(-1px);
-}
-.btn:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-  transform: none;
-}
 
-/* ===== テーブル（DP/トレリス） ===== */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 16px;
-}
-table {
+/* ○ トレリス用テーブル */
+.trellis-table {
   border-collapse: collapse;
-  width: 100%;
+  position: relative;
+  margin: 0 auto;
+  /* 背景に斜め線を引くための工夫 */
 }
-th, td {
-  border: 1px solid #aaa;
-  padding: 8px 12px;
-  text-align: center;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 14px;
-  background-color: var(--card-bg);
-  transition: background-color 0.2s;
-}
-.highlight {
-  background-color: var(--highlight-color) !important;
-  color: #fff;
-}
-.confirmed {
-  background-color: var(--confirmed-color) !important;
-  color: #fff;
-}
-
-/* ===== バー表示 ===== */
-.bars-wrapper {
-  display: flex;
-  align-items: flex-end;
-  height: 150px;
-  gap: 4px;
-  margin-top: 16px;
-  overflow-x: auto;
-}
-.bar {
-  flex: 1;
-  background-color: var(--accent-color);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  transition: background-color 0.2s, height 0.2s;
-}
-.bar.highlight {
-  background-color: var(--highlight-color) !important;
-}
-.bar.confirmed {
-  background-color: var(--confirmed-color) !important;
-}
-
-/* ===== 説明エリア ===== */
-.description {
-  margin-top: 16px;
-  padding: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fafafa;
-  font-size: 14px;
-  min-height: 80px;
-  white-space: pre-wrap;
-}
-
-/* ===== ステップ制御ボタン ===== */
-.step-controls {
-  margin-top: 16px;
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-}
-.step-controls .btn {
-  padding: 8px 16px;
-  font-size: 13px;
-}
-
-/* ===== スライダー ===== */
-.slider {
-  width: 100%;
-  max-width: 240px;
-  margin-top: 6px;
-}
-
-/* ===== 進捗表示 ===== */
-.progress {
-  margin-top: 12px;
-  font-size: 14px;
-  text-align: right;
-  color: #555;
-  font-style: italic;
-}
-
-/* ===== HMM のトレリス用カラムヘッダー ===== */
-.trellis-header {
-  background-color: var(--accent-color);
-  color: #fff;
-}
-
-/* ===== Hash テーブル ===== */
-.hash-container {
-  display: flex;
-  gap: 4px;
-  margin-top: 16px;
-  overflow-x: auto;
-}
-.hash-slot {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #888;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: monospace;
-  font-size: 14px;
-  background-color: var(--accent-color);
-  color: #fff;
-  transition: background-color 0.2s;
-  border-radius: 4px;
-}
-.hash-slot.empty {
+.trellis-table th,
+.trellis-table td {
+  border: 1px solid #bbb;
+  width: 60px;
+  height: 60px;
+  position: relative;
   background-color: #fff;
-  color: #555;
 }
-.hash-slot.highlight {
-  background-color: var(--highlight-color) !important;
-  color: #fff;
-}
-.hash-slot.confirmed {
-  background-color: var(--confirmed-color) !important;
-  color: #fff;
+/* 斜めのグリッド線を表示する */
+.trellis-table td::before,
+.trellis-table th::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(45deg, rgba(200,200,200,0.3) 25%, transparent 25%, transparent 75%, rgba(200,200,200,0.3) 75%, rgba(200,200,200,0.3)),
+                    linear-gradient(45deg, rgba(200,200,200,0.3) 25%, transparent 25%, transparent 75%, rgba(200,200,200,0.3) 75%, rgba(200,200,200,0.3));
+  background-size: 12px 12px;
+  background-position: 0 0, 6px 6px;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* ===== レスポンシブ対応 ===== */
-@media screen and (max-width: 600px) {
-  .controls {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .label {
-    flex: 1 1 auto;
-  }
-  .step-controls {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
-  .step-controls .btn {
-    width: 100%;
-  }
-  .bars-wrapper {
-    height: 120px;
-  }
-  .hash-slot {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
-  }
-  table th, table td {
-    padding: 6px 8px;
-    font-size: 12px;
-  }
+/* セルの中に丸を描く */
+.trellis-table td .circle,
+.trellis-table th .circle {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  top: calc(50% - 12px);
+  left: calc(50% - 12px);
+  z-index: 2;
+  opacity: 0.9;
 }
+
+/* 通常セル（白） */
+.trellis-table td {
+  background-color: #fff;
+}
+/* 現在更新中セルは黄色の円を表示 */
+.trellis-table td.current .circle {
+  background-color: #ffeb3b; /* 黄色 */
+}
+/* 確定経路セルは緑色の円を表示 */
+.trellis-table td.path .circle {
+  background-color: #4caf50; /* 緑 */
+}
+
+/* セルに値をテキスト表示（オプション） */
+.trellis-table td .value-label {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 12px;
+  z-index: 3;
+  color: #000;
+}
+
+/* ヘッダー行・列のスタイル */
+.trellis-table th {
+  background-color: #e0e0e0;
+  border: 1px solid #aaa;
+  text-align: center;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+/* 時間軸ラベルを斜めに */
+.trellis-header {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 12px;
+  color: #333;
+}
+
+/* 矢印を描きたい場合 (擬似要素で線を描画) */
+/* ここでは円のみを描画し、矢印は省略します。 */
