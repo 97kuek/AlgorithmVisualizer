@@ -1,4 +1,8 @@
 # AlgorithmVisualizer
+
+[AlgorithmVisualizer](https://97kuek.github.io/AlgorithmVisualizer/)
+
+
 - アルゴリズムとデータ構造・情報理論の授業で紹介されたアルゴリズムの可視化ツール
 ## 実装済みアルゴリズム
 1. 動的計画法
@@ -18,9 +22,7 @@
 - ビタビアルゴリズム
 5. ハッシュ法
 - オープンアドレス法
-- チェイン法(実装予定)
-6. スタックとキュー(実装予定)
+- チェイン法
+6. スタックとキュー
 - スタック
 - キュー
-
-- [AlgorithmVisualizer](https://97kuek.github.io/AlgorithmVisualizer/)
