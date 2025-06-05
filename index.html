@@ -4,181 +4,208 @@
   <meta charset="UTF-8">
   <title>Algorithm Visualizer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- 外部CSS -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- ===========================
-       ヘッダー
-  ============================ -->
-  <header class="header">
-    <h1>Algorithm Visualizer</h1>
-    <p class="subtitle">各種アルゴリズムのステップ実行と可視化</p>
-  </header>
-
-  <!-- ===========================
-       メインコンテナ
-  ============================ -->
-  <div class="container">
-
-    <!-- アルゴリズム選択ドロップダウン -->
-    <div class="section">
-      <label class="label" for="algoSelect">アルゴリズムを選択：</label>
-      <select id="algoSelect" class="select">
-        <option value="">-- 選択してください --</option>
-        <option value="edit">Edit Distance (編集距離)</option>
-        <option value="knapsack">0/1 Knapsack</option>
-        <option value="sorting">Sorting</option>
-        <option value="searching">Searching</option>
-        <option value="forward">Forward Algorithm (HMM)</option>
-        <option value="viterbi">Viterbi Algorithm (HMM)</option>
-        <option value="lp">Linear Programming (Simplex)</option>
-        <option value="hash">Hash (Open Addressing)</option>
-        <option value="stack">Stack</option>
-        <option value="queue">Queue</option>
-        <option value="hashChain">Hash (Chaining)</option>
-      </select>
+  <!-- ============================================================== -->
+  <!-- ナビゲーションバー (背景知識 ⇔ 可視化ツール の切替) -->
+  <!-- ============================================================== -->
+  <nav class="navbar">
+    <div class="navbar-logo">🧮 AlgorithmVisualizer</div>
+    <div class="navbar-tabs">
+      <button class="nav-tab active" data-target="backgroundSection">背景知識</button>
+      <button class="nav-tab" data-target="visualizerSection">可視化ツール</button>
     </div>
+  </nav>
 
-    <!-- 背景知識タブ（アルゴリズムごとの説明） -->
-    <div id="bgTabs" class="tabs" style="display: none; margin-bottom: 16px;">
+  <!-- ============================================================== -->
+  <!-- 背景知識セクション：アルゴリズムごとの理論解説だけを並べたタブ -->
+  <!-- ============================================================== -->
+  <section id="backgroundSection" class="section-container">
+    <!-- タブボタン -->
+    <div class="tabs">
       <button class="tab-button active" data-tab="tab-edit">Edit Distance</button>
-      <button class="tab-button" data-tab="tab-knap">Knapsack</button>
+      <button class="tab-button" data-tab="tab-knap">0/1 Knapsack</button>
       <button class="tab-button" data-tab="tab-sort">Sorting</button>
       <button class="tab-button" data-tab="tab-search">Searching</button>
       <button class="tab-button" data-tab="tab-forward">Forward</button>
       <button class="tab-button" data-tab="tab-viterbi">Viterbi</button>
-      <button class="tab-button" data-tab="tab-lp">LP (Simplex)</button>
-      <button class="tab-button" data-tab="tab-hashOpen">Hash (Open Addressing)</button>
+      <button class="tab-button" data-tab="tab-lp">Linear Programming</button>
+      <button class="tab-button" data-tab="tab-hashOpen">Hash(Open)</button>
       <button class="tab-button" data-tab="tab-stack">Stack</button>
       <button class="tab-button" data-tab="tab-queue">Queue</button>
-      <button class="tab-button" data-tab="tab-hashChain">Hash (Chaining)</button>
+      <button class="tab-button" data-tab="tab-hashChain">Hash(Chaining)</button>
     </div>
 
-    <!-- 背景知識タブの内容 -->
-    <div id="tab-edit" class="tab-content active">
-      <div class="section">
-        <h2 class="section-title">Edit Distance (編集距離) の背景知識</h2>
-        <p class="description">
-Dynamic Programming を用いて、文字列 s1 → s2 への最少操作回数（挿入・削除・置換）を求めます。
-各セル dp[i][j] は、s1 の先頭 i 文字と s2 の先頭 j 文字の編集距離を表します。
+    <!-- タブコンテンツ -->
+    <div class="tab-content active" id="tab-edit">
+      <div class="card">
+        <h2 class="card-title">Edit Distance (編集距離)</h2>
+        <p class="card-text">
+Dynamic Programming を用いて、文字列 s1 → s2 に変換するための最小操作回数を求めます。<br>
+操作は「挿入」「削除」「置換」の 3 種類。<br>
+DP テーブル dp[i][j] は「s1 の先頭 i 文字を s2 の先頭 j 文字にするコスト」を意味し、  
+dp[i][j] = min( dp[i−1][j]+1（削除）, dp[i][j−1]+1（挿入）, dp[i−1][j−1]+(s1[i]==s2[j]?0:1) ) で定義されます。<br>
+最後に dp[n][m] が編集距離となります。
         </p>
       </div>
     </div>
 
-    <div id="tab-knap" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">0/1 Knapsack の背景知識</h2>
-        <p class="description">
-限られた容量 W の中で、重み w[i], 価値 v[i] を持つ n 個の品物から価値の和を最大化する問題です。
-dp[i][j] は「品物 i まで検討して容量 j を使ったときの最大価値」を表します。
+    <div class="tab-content" id="tab-knap">
+      <div class="card">
+        <h2 class="card-title">0/1 Knapsack</h2>
+        <p class="card-text">
+限られた容量 W のナップサックに、<br>
+重み w[i], 価値 v[i] を持つ n 個の品物から選んで詰め込み、<br>
+価値の合計を最大化する問題です。<br>
+DP テーブル dp[i][j] は「品物 1..i を検討して、容量 j を使ったときの最大価値」を表し、<br>
+dp[i][j] = max( dp[i−1][j], dp[i−1][j−w[i]] + v[i] ) で更新します。
         </p>
       </div>
     </div>
 
-    <div id="tab-sort" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Sorting の背景知識</h2>
-        <p class="description">
-バブルソート、クイックソート、マージソート、挿入ソート、選択ソート等のアルゴリズムを可視化します。
-比較・交換のたびに状態を描画することで、アルゴリズムの動作を直感的に理解できます。
+    <div class="tab-content" id="tab-sort">
+      <div class="card">
+        <h2 class="card-title">Sorting</h2>
+        <p class="card-text">
+ここでは代表的なソートアルゴリズムを列挙します。<br>
+- Bubble Sort（バブルソート）: 隣接要素を比較・交換して最大値を後ろへ「泡のように」浮かせていく。<br>
+- Quick Sort（クイックソート）: ピボットを選び、ピボット未満と以上の領域に分割しながら分割統治法でソート。<br>
+- Merge Sort（マージソート）: 配列を半分ずつ分割し、分割済配列をマージしてソートする分割統治アルゴリズム。<br>
+- Insertion Sort（挿入ソート）: 未ソート部分の先頭要素をソート済部分に適切な位置へ挿入していく。<br>
+- Selection Sort（選択ソート）: 未ソート部分から最小値を選んで先頭と交換し、ソート済範囲を拡大していく。
         </p>
       </div>
     </div>
 
-    <div id="tab-search" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Searching の背景知識</h2>
-        <p class="description">
-線形探索 (Linear)、2分探索 (Binary)、番兵法 (Sentinel) を可視化します。
-配列上の要素を順番に、あるいは範囲を半分ずつ絞りながら探索する過程を示します。
+    <div class="tab-content" id="tab-search">
+      <div class="card">
+        <h2 class="card-title">Searching</h2>
+        <p class="card-text">
+配列やリストから特定のキーを探す代表的探索法を紹介します。<br>
+- Linear Search（線形探索）: 先頭から順番にチェックしていく方法。<br>
+- Binary Search（二分探索）: ソート済配列を半分に分割しながら探す高速探索（O(log n)）。<br>
+- Sentinel Search（番兵法）: 探索対象の末尾に「番兵」として探索キーを置き、番兵に到達したら終了とするテクニック。
         </p>
       </div>
     </div>
 
-    <div id="tab-forward" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Forward Algorithm の背景知識</h2>
-        <p class="description">
-隠れマルコフモデル (HMM) において、ある観測系列 {o₀…oₜ} が生成される確率を
-動的計画法で計算するアルゴリズムです。α[t][i] = Σ_i α[t−1][i]*a[i→j] × b[j→oₜ] という式が柱になります。
+    <div class="tab-content" id="tab-forward">
+      <div class="card">
+        <h2 class="card-title">Forward Algorithm (HMM)</h2>
+        <p class="card-text">
+隠れマルコフモデル (HMM) において、観測系列 {o₀,…,o_{T−1}} が出現する確率（尤度）を<br>
+動的計画法で計算するアルゴリズムです。<br>
+α[t][i] = Σ_{k=0..N−1} α[t−1][k] × a[k→i] × b[i→oₜ] を使い、時刻 t ごとに累積確率を求めていきます。<br>
+最終的に Σ_{i=0..N−1} α[T−1][i] が観測系列の確率となります。
         </p>
       </div>
     </div>
 
-    <div id="tab-viterbi" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Viterbi Algorithm の背景知識</h2>
-        <p class="description">
-HMM において、観測系列がもっとも起こりやすい隠れ状態列を求めるアルゴリズムです。
-動的計画法で「最大 (前時刻の確率 × 遷移確率)」を保持しながら、ψ[t][i] を使って経路復元します。
+    <div class="tab-content" id="tab-viterbi">
+      <div class="card">
+        <h2 class="card-title">Viterbi Algorithm (HMM)</h2>
+        <p class="card-text">
+HMM において、観測系列がもっとも高い確率で通る隠れ状態列（最尤経路）を求めるアルゴリズムです。<br>
+δ[t][i] = max_{k}( δ[t−1][k] × a[k→i] ) × b[i→oₜ],<br>
+ψ[t][i] = argmax_{k}( δ[t−1][k] × a[k→i] ) という更新を行い、<br>
+最後に backtracking で最尤経路を復元します。
         </p>
       </div>
     </div>
 
-    <div id="tab-lp" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Linear Programming (Simplex) の背景知識</h2>
-        <p class="description">
-線形計画問題を標準形 (スラック変数を付加) に変形し、単純形表を構築します。  
-ここでは「最初の単純形表の構築」を可視化し、ピボットステップの詳細は省略した形とします。
+    <div class="tab-content" id="tab-lp">
+      <div class="card">
+        <h2 class="card-title">Linear Programming (Simplex)</h2>
+        <p class="card-text">
+線形計画問題を標準形 (スラック変数を導入) に変形し、<br>
+単純形法(Simplex) を使って最適解を得る手法です。<br>
+ここでは「初期単純形表の構築」を可視化します。<br>
+（詳細なピボット操作は省略し、初期テーブルの作り方だけ示します）
         </p>
       </div>
     </div>
 
-    <div id="tab-hashOpen" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Hash (Open Addressing) の背景知識</h2>
-        <p class="description">
-オープンアドレス法（リニアプロービング）でハッシュテーブルにキーを挿入する過程を可視化します。
-ハッシュ値 h = k mod m を基準とし、衝突があれば (h+1)%m, (h+2)%m … と順に調べます。
+    <div class="tab-content" id="tab-hashOpen">
+      <div class="card">
+        <h2 class="card-title">Hash (Open Addressing)</h2>
+        <p class="card-text">
+オープンアドレス法（リニアプロービング）でハッシュテーブルにキーを挿入する過程を示します。<br>
+h = k mod m をハッシュ値として、  
+もし衝突したら (h+1)%m, (h+2)%m … のように順に調べ、空きスロットが見つかったら挿入します。
         </p>
       </div>
     </div>
 
-    <div id="tab-stack" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Stack の背景知識</h2>
-        <p class="description">
-後入れ先出し (LIFO) のデータ構造「スタック」を可視化します。
-push/pop を行うたびに、要素が上に積まれていく様子や取り出される様子を描画します。
+    <div class="tab-content" id="tab-stack">
+      <div class="card">
+        <h2 class="card-title">Stack</h2>
+        <p class="card-text">
+後入れ先出し (LIFO) のデータ構造。<br>
+push のたびに「トップ」に要素を積み、pop のたびに一番上から取り出す。<br>
+配列やリンクリストで実装でき、呼び出しスタックや式評価などに使われます。
         </p>
       </div>
     </div>
 
-    <div id="tab-queue" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Queue の背景知識</h2>
-        <p class="description">
-先入れ先出し (FIFO) のデータ構造「キュー」を可視化します。
-enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様子を描画します。
+    <div class="tab-content" id="tab-queue">
+      <div class="card">
+        <h2 class="card-title">Queue</h2>
+        <p class="card-text">
+先入れ先出し (FIFO) のデータ構造。<br>
+enqueue のとき末尾に要素を追加し、dequeue で先頭から取り出す。<br>
+幅優先探索 (BFS) やイベントキューなどでよく用いられます。
         </p>
       </div>
     </div>
 
-    <div id="tab-hashChain" class="tab-content">
-      <div class="section">
-        <h2 class="section-title">Hash (Chaining) の背景知識</h2>
-        <p class="description">
-チェイン法ハッシュでは、ハッシュテーブルの各スロットに連結リスト(チェイン)を持たせます。
-キー k のハッシュ値 h = k mod m を使い、同じスロットに複数キーをリンクリストとして保持します。
+    <div class="tab-content" id="tab-hashChain">
+      <div class="card">
+        <h2 class="card-title">Hash (Chaining)</h2>
+        <p class="card-text">
+チェイン法ハッシュでは、ハッシュテーブルの各スロットを「連結リスト (チェイン)」で管理します。<br>
+h = k mod m で決まるインデックスに、複数キーをリンクリストの形で格納し、<br>
+探索・挿入・削除のときは該当リストを先頭から検索します。  
+衝突しても別スロットへ移動せず、同一バケット内でリストが伸びていくイメージです。
         </p>
       </div>
     </div>
+  </section>
 
-    <!-- ===========================
-         1) Edit Distance 用コントロール
-    ============================ -->
+
+  <!-- ============================================================== -->
+  <!-- 可視化ツールセクション：実際にステップ実行・描画できるUI -->
+  <!-- ============================================================== -->
+  <section id="visualizerSection" class="section-container" style="display: none;">
+    <!-- アルゴリズム選択ドロップダウン -->
+    <div class="controls select-container">
+      <label class="label" for="algoSelect">アルゴリズムを選択：</label>
+      <select id="algoSelect" class="select">
+        <option value="">-- 選択してください --</option>
+        <option value="edit">Edit Distance</option>
+        <option value="knapsack">0/1 Knapsack</option>
+        <option value="sorting">Sorting</option>
+        <option value="searching">Searching</option>
+        <option value="forward">Forward Algorithm</option>
+        <option value="viterbi">Viterbi Algorithm</option>
+        <option value="lp">Linear Programming</option>
+        <option value="hash">Hash(Open Addressing)</option>
+        <option value="stack">Stack</option>
+        <option value="queue">Queue</option>
+        <option value="hashChain">Hash(Chaining)</option>
+      </select>
+    </div>
+
+    <!-- ====== Edit Distance 用コントロール ====== -->
     <div id="editControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">文字列1 (s1): 
+        <label class="label">文字列1(s1):
           <input type="text" id="edit_s1" class="input" placeholder="例: waseda">
         </label>
-        <label class="label">文字列2 (s2): 
+        <label class="label">文字列2(s2):
           <input type="text" id="edit_s2" class="input" placeholder="例: university">
         </label>
-        <label class="label">スピード (倍速): 
+        <label class="label">スピード(倍速):
           <select id="editSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -201,21 +228,19 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
       <p class="description" id="editDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         2) Knapsack 用コントロール
-    ============================ -->
+    <!-- ====== 0/1 Knapsack 用コントロール ====== -->
     <div id="knapControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">重みリスト (カンマ区切り):
+        <label class="label">重みリスト(カンマ区切り):
           <input type="text" id="knap_weights" class="input" placeholder="例: 2,3,4,5">
         </label>
-        <label class="label">価値リスト (カンマ区切り):
+        <label class="label">価値リスト(カンマ区切り):
           <input type="text" id="knap_values" class="input" placeholder="例: 3,4,5,6">
         </label>
-        <label class="label">容量 (capacity):
+        <label class="label">容量(capacity):
           <input type="number" id="knap_capacity" class="input" placeholder="例: 8">
         </label>
-        <label class="label">スピード (倍速):
+        <label class="label">スピード(倍速):
           <select id="knapSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -238,12 +263,10 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
       <p class="description" id="knapDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         3) Sorting 用コントロール
-    ============================ -->
+    <!-- ====== Sorting 用コントロール ====== -->
     <div id="sortControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">配列 (カンマ区切り、数値):
+        <label class="label">配列(カンマ区切り):
           <input type="text" id="sort_array" class="input" placeholder="例: 5,2,9,1,5">
         </label>
         <label class="label">アルゴリズム:
@@ -255,7 +278,7 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
             <option value="select">Selection Sort</option>
           </select>
         </label>
-        <label class="label">スピード (倍速):
+        <label class="label">スピード(倍速):
           <select id="sortSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -276,12 +299,10 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
       <p class="description" id="sortDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         4) Searching 用コントロール
-    ============================ -->
+    <!-- ====== Searching 用コントロール ====== -->
     <div id="searchControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">配列 (ソート済み、カンマ区切り):
+        <label class="label">配列(ソート済み、カンマ区切り):
           <input type="text" id="search_array" class="input" placeholder="例: 1,2,3,5,7,8">
         </label>
         <label class="label">キー:
@@ -294,7 +315,7 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
             <option value="sentinel">Sentinel Search</option>
           </select>
         </label>
-        <label class="label">スピード (倍速):
+        <label class="label">スピード(倍速):
           <select id="searchSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -315,35 +336,33 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
       <p class="description" id="searchDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         5) Forward Algorithm 用コントロール
-    ============================ -->
+    <!-- ====== Forward Algorithm 用コントロール ====== -->
     <div id="forwardControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">状態 (カンマ区切り):
+        <label class="label">状態(カンマ区切り):
           <input type="text" id="fwd_states" class="input" placeholder="例: S0,S1">
         </label>
-        <label class="label">観測系列 (カンマ区切り):
+        <label class="label">観測系列(カンマ区切り):
           <input type="text" id="fwd_obs" class="input" placeholder="例: o0,o1,o2">
         </label>
       </div>
       <div class="controls">
-        <label class="label">π (カンマ区切り):
+        <label class="label">π(カンマ区切り):
           <textarea id="fwd_pi" class="input" rows="1" placeholder="例: 0.6,0.4"></textarea>
         </label>
-        <label class="label">A 行列 (N×N、改行区切りで):
+        <label class="label">A 行列 (N×N):
           <textarea id="fwd_A" class="input" rows="3" placeholder="例:
 0.7,0.3
 0.4,0.6"></textarea>
         </label>
-        <label class="label">B 行列 (N×T、改行区切りで):
+        <label class="label">B 行列 (N×T):
           <textarea id="fwd_B" class="input" rows="3" placeholder="例:
 0.5,0.5,0.0
 0.0,0.5,0.5"></textarea>
         </label>
       </div>
       <div class="controls">
-        <label class="label">スピード (倍速):
+        <label class="label">スピード(倍速):
           <select id="fwdSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -366,35 +385,33 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
       <p class="description" id="fwdDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         6) Viterbi Algorithm 用コントロール
-    ============================ -->
+    <!-- ====== Viterbi Algorithm 用コントロール ====== -->
     <div id="viterbiControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">状態 (カンマ区切り):
+        <label class="label">状態(カンマ区切り):
           <input type="text" id="vit_states" class="input" placeholder="例: S0,S1">
         </label>
-        <label class="label">観測系列 (カンマ区切り):
+        <label class="label">観測系列(カンマ区切り):
           <input type="text" id="vit_obs" class="input" placeholder="例: o0,o1,o2">
         </label>
       </div>
       <div class="controls">
-        <label class="label">π (カンマ区切り):
+        <label class="label">π(カンマ区切り):
           <textarea id="vit_pi" class="input" rows="1" placeholder="例: 0.6,0.4"></textarea>
         </label>
-        <label class="label">A 行列 (N×N、改行区切りで):
+        <label class="label">A 行列 (N×N):
           <textarea id="vit_A" class="input" rows="3" placeholder="例:
 0.7,0.3
 0.4,0.6"></textarea>
         </label>
-        <label class="label">B 行列 (N×T、改行区切りで):
+        <label class="label">B 行列 (N×T):
           <textarea id="vit_B" class="input" rows="3" placeholder="例:
 0.5,0.5,0.0
 0.0,0.5,0.5"></textarea>
         </label>
       </div>
       <div class="controls">
-        <label class="label">スピード (倍速):
+        <label class="label">スピード(倍速):
           <select id="vitSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -417,12 +434,10 @@ enqueue/dequeue を行うたびに要素が並ぶ様子や取り出される様�
       <p class="description" id="vitDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         7) Linear Programming 用コントロール
-    ============================ -->
+    <!-- ====== LP 用コントロール ====== -->
     <div id="lpControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">LP 定義 (標準形)：<br>
+        <label class="label">LP 定義(標準形):<br>
           <textarea id="lp_input" class="input" rows="6" placeholder="例：
 maximize 3x + 2y
 s.t.
@@ -433,7 +448,7 @@ s.t.
         </label>
       </div>
       <div class="controls">
-        <label class="label">スピード (倍速):
+        <label class="label">スピード(倍速):
           <select id="lpSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -456,18 +471,16 @@ s.t.
       <p class="description" id="lpDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         8) Hash (Open Addressing) 用コントロール
-    ============================ -->
+    <!-- ====== Hash(Open) 用コントロール ====== -->
     <div id="hashControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">テーブルサイズ m:
+        <label class="label">テーブルサイズ(m):
           <input type="number" id="hash_m" class="input" placeholder="例: 7">
         </label>
-        <label class="label">キー列 (カンマ区切り):
+        <label class="label">キー列(カンマ区切り):
           <input type="text" id="hash_keys" class="input" placeholder="例: 10,22,31,4,15">
         </label>
-        <label class="label">スピード (倍速):
+        <label class="label">スピード(倍速):
           <select id="hashSpeedSelect" class="speed-select">
             <option value="0.5">0.5x</option>
             <option value="1" selected>1x</option>
@@ -488,70 +501,64 @@ s.t.
       <p class="description" id="hashDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         9) Stack 用コントロール
-    ============================ -->
+    <!-- ====== Stack 用コントロール ====== -->
     <div id="stackControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">初期値 (カンマ区切り):
+        <label class="label">初期値(カンマ区切り):
           <input type="text" id="stack_value" class="input" placeholder="例: A,B,C">
         </label>
         <button id="stackInitBtn" class="btn">Initialize</button>
       </div>
-      <div class="controls" style="margin-top: 8px;">
+      <div class="controls">
         <button id="stackPushBtn" class="btn outline">Push</button>
         <button id="stackPopBtn" class="btn outline">Pop</button>
       </div>
-      <div class="step-controls" style="margin-top: 8px;">
+      <div class="step-controls">
         <button id="stackPrevBtn" class="btn small" disabled>◀︎ 前へ</button>
         <button id="stackNextBtn" class="btn small" disabled>次へ ▶︎</button>
       </div>
       <div class="progress" id="stackProgress">ステップ 0 / 0</div>
       <div class="table-wrapper" style="display: flex; justify-content: center;">
-        <div id="stackContainer" style="display: flex; flex-direction: column-reverse; gap: 4px;"></div>
+        <div id="stackContainer" class="stack-visual"></div>
       </div>
       <p class="description" id="stackDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         10) Queue 用コントロール
-    ============================ -->
+    <!-- ====== Queue 用コントロール ====== -->
     <div id="queueControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">初期値 (カンマ区切り):
+        <label class="label">初期値(カンマ区切り):
           <input type="text" id="queue_value" class="input" placeholder="例: 1,2,3">
         </label>
         <button id="queueInitBtn" class="btn">Initialize</button>
       </div>
-      <div class="controls" style="margin-top: 8px;">
+      <div class="controls">
         <button id="queueEnqueueBtn" class="btn outline">Enqueue</button>
         <button id="queueDequeueBtn" class="btn outline">Dequeue</button>
       </div>
-      <div class="step-controls" style="margin-top: 8px;">
+      <div class="step-controls">
         <button id="queuePrevBtn" class="btn small" disabled>◀︎ 前へ</button>
         <button id="queueNextBtn" class="btn small" disabled>次へ ▶︎</button>
       </div>
       <div class="progress" id="queueProgress">ステップ 0 / 0</div>
       <div class="table-wrapper" style="display: flex; justify-content: center;">
-        <div id="queueContainer" style="display: flex; gap: 8px;"></div>
+        <div id="queueContainer" class="queue-visual"></div>
       </div>
       <p class="description" id="queueDesc">ここにステップの説明が表示されます。</p>
     </div>
 
-    <!-- ===========================
-         11) Hash (Chaining) 用コントロール
-    ============================ -->
+    <!-- ====== Hash(Chaining) 用コントロール ====== -->
     <div id="hashChainControls" class="algo-controls" style="display: none;">
       <div class="controls">
-        <label class="label">テーブルサイズ (m):
+        <label class="label">テーブルサイズ(m):
           <input type="number" id="hashChainSize" class="input" placeholder="例: 7">
         </label>
-        <label class="label">キー列 (カンマ区切り):
+        <label class="label">キー列(カンマ区切り):
           <input type="text" id="hashChainKeys" class="input" placeholder="例: 10,22,31,4,15">
         </label>
         <button id="hashChainInitBtn" class="btn">Initialize</button>
       </div>
-      <div class="step-controls" style="margin-top: 8px;">
+      <div class="step-controls">
         <button id="hashChainPrevBtn" class="btn small" disabled>◀︎ 前へ</button>
         <button id="hashChainNextBtn" class="btn small" disabled>次へ ▶︎</button>
       </div>
@@ -559,12 +566,11 @@ s.t.
       <div class="hash-container" id="hashChainContainer" style="flex-wrap: wrap;"></div>
       <p class="description" id="hashChainDesc">ここにステップの説明が表示されます。</p>
     </div>
+  </section>
 
-  </div> <!-- /.container -->
-
-  <!-- ===========================
-       JavaScript の読み込み
-  ============================ -->
+  <!-- ============================================================== -->
+  <!-- JavaScript の読み込み -->
+  <!-- ============================================================== -->
   <script src="js/common.js"></script>
   <script src="js/edit.js"></script>
   <script src="js/knapsack.js"></script>
@@ -578,5 +584,24 @@ s.t.
   <script src="js/queue.js"></script>
   <script src="js/hashChaining.js"></script>
   <script src="js/main.js"></script>
+
+  <!-- ============================================================== -->
+  <!-- ナビゲーション切替用スクリプト (Background ↔ Visualizer) -->
+  <!-- ============================================================== -->
+  <script>
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // タブボタンの active 制御
+        document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // セクションの表示制御
+        const target = btn.getAttribute('data-target');
+        document.querySelectorAll('.section-container').forEach(sec => {
+          if (sec.id === target) sec.style.display = 'block';
+          else sec.style.display = 'none';
+        });
+      });
+    });
+  </script>
 </body>
 </html>

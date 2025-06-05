@@ -12,111 +12,142 @@ html {
 }
 body {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  background: #f0f4f8;
   color: #333;
   min-height: 100vh;
-  line-height: 1.6;
   display: flex;
   flex-direction: column;
 }
 
 /* ─────────────────────────────────────────
-   ヘッダー
+   ナビゲーションバー
 ───────────────────────────────────────── */
-.header {
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: linear-gradient(90deg, #4b6cb7, #182848);
-  padding: 24px 16px;
-  text-align: center;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.header h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
-.subtitle {
-  font-size: 1rem;
-  color: #d1d5db;
-}
-
-/* ─────────────────────────────────────────
-   コンテナ
-───────────────────────────────────────── */
-.container {
-  max-width: 1200px;
-  margin: 24px auto;
-  padding: 0 16px;
-  flex: 1;
-}
-
-/* ─────────────────────────────────────────
-   セクションタイトル
-───────────────────────────────────────── */
-.section {
-  background-color: #ffffff;
-  border-radius: 12px;
-  margin-bottom: 24px;
   padding: 16px 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.section:hover {
-  transform: translateY(-3px);
-}
-.section-title {
+.navbar-logo {
   font-size: 1.5rem;
-  color: #102a43;
-  font-weight: 600;
-  margin-bottom: 12px;
-  position: relative;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
 }
-.section-title::after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 4px;
-  background: #4b6cb7;
-  margin-top: 4px;
-  border-radius: 2px;
+.navbar-tabs {
+  display: flex;
+  gap: 12px;
+}
+.nav-tab {
+  background: #5a7bcd;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+}
+.nav-tab:hover:not(.active) {
+  background: #6a8cde;
+}
+.nav-tab.active {
+  background: #fff;
+  color: #182848;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 /* ─────────────────────────────────────────
-   タブボタン
+   セクションコンテナ
+───────────────────────────────────────── */
+.section-container {
+  flex: 1;
+  padding: 24px 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────
+   タブ (背景知識用)
 ───────────────────────────────────────── */
 .tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-bottom: 24px;
 }
 .tab-button {
   background-color: #e2e8f0;
   color: #334155;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s ease;
   font-size: 0.9rem;
 }
-.tab-button:hover {
+.tab-button:hover:not(.active) {
   background-color: #cbd5e1;
 }
 .tab-button.active {
   background-color: #4b6cb7;
   color: #fff;
 }
+
+/* タブコンテンツ */
 .tab-content {
   display: none;
 }
 .tab-content.active {
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 32px;
 }
 
 /* ─────────────────────────────────────────
-   ラベル・入力欄・セレクトボックス・ボタン
+   カードスタイル (背景知識の説明文)
+───────────────────────────────────────── */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+}
+.card-title {
+  font-size: 1.5rem;
+  color: #102a43;
+  font-weight: 600;
+  margin-bottom: 12px;
+  position: relative;
+}
+.card-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: #4b6cb7;
+  margin-top: 6px;
+  border-radius: 2px;
+}
+.card-text {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #334155;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ─────────────────────────────────────────
+   共通コントロールスタイル
 ───────────────────────────────────────── */
 /* ラベル */
 .label {
@@ -124,10 +155,10 @@ body {
   color: #334155;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-/* テキスト入力・テキストエリア */
+/* 入力欄 (テキスト・数値・テキストエリア) */
 .input {
   padding: 8px 12px;
   font-size: 0.95rem;
@@ -139,7 +170,7 @@ body {
 }
 .input:focus {
   border-color: #4b6cb7;
-  box-shadow: 0 0 6px rgba(75, 108, 183, 0.3);
+  box-shadow: 0 0 8px rgba(75,108,183,0.3);
   outline: none;
 }
 textarea.input {
@@ -154,7 +185,7 @@ textarea.input {
   border: 2px solid #cbd5e1;
   border-radius: 6px;
   margin-left: 8px;
-  background-color: #ffffff;
+  background-color: #fff;
   appearance: none;
   cursor: pointer;
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20viewBox%3D%220%200%2010%207%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L0%200h10L5%207z%22%20fill%3D%22%23334E68%22/%3E%3C/svg%3E");
@@ -164,20 +195,20 @@ textarea.input {
 }
 .select:focus, .speed-select:focus {
   border-color: #4b6cb7;
-  box-shadow: 0 0 6px rgba(75, 108, 183, 0.3);
+  box-shadow: 0 0 8px rgba(75,108,183,0.3);
   outline: none;
 }
 
 /* ボタン */
 .btn {
   background: linear-gradient(90deg, #4b6cb7, #182848);
-  color: #ffffff;
+  color: #fff;
   font-size: 0.95rem;
   padding: 10px 18px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   transition: background 0.2s ease, transform 0.1s ease;
 }
 .btn:hover:not(:disabled) {
@@ -191,7 +222,7 @@ textarea.input {
   cursor: not-allowed;
   box-shadow: none;
 }
-/* アウトライン風ボタン */
+/* アウトライン風 */
 .btn.outline {
   background: none;
   color: #4b6cb7;
@@ -199,7 +230,7 @@ textarea.input {
 }
 .btn.outline:hover:not(:disabled) {
   background: #4b6cb7;
-  color: #ffffff;
+  color: #fff;
 }
 
 /* 小さいボタン（ステップ操作用） */
@@ -215,6 +246,11 @@ textarea.input {
   gap: 12px;
   margin-bottom: 16px;
   align-items: center;
+}
+
+/* セレクトボックス領域 */
+.select-container {
+  margin-bottom: 24px;
 }
 
 /* ステップ制御ボタン */
@@ -246,10 +282,8 @@ textarea.input {
 }
 
 /* ─────────────────────────────────────────
-   テーブル（DP テーブル、トレリス、シンプル表）
+   テーブル (DP / トレリス / LP)
 ───────────────────────────────────────── */
-
-/* テーブルラッパー */
 .table-wrapper {
   overflow-x: auto;
   margin-top: 12px;
@@ -264,17 +298,15 @@ textarea.input {
 .trellis-table {
   border-collapse: collapse;
   margin: 0 auto;
-  background-color: #ffffff;
-  position: relative;
   width: 100%;
 }
 .trellis-table th,
 .trellis-table td {
-  border: 1px solid #d1d5db;
+  border: 1px solid #d1d5e0;
   width: 60px;
   height: 60px;
   position: relative;
-  background-color: #ffffff;
+  background-color: #fff;
   transition: background 0.2s ease;
 }
 .trellis-table td::before,
@@ -292,7 +324,7 @@ textarea.input {
   z-index: 1;
 }
 .trellis-table td:hover {
-  background-color: rgba(75, 108, 183, 0.08);
+  background-color: rgba(75,108,183,0.08);
 }
 .trellis-table th {
   background-color: #f1f5f9;
@@ -308,32 +340,16 @@ textarea.input {
   font-size: 0.8rem;
   color: #334155;
 }
-/* 現在更新中セル */
+
+/* 強調中セル */
 .trellis-table td.highlight {
-  background-color: rgba(254, 243, 199, 0.9);
+  background-color: rgba(254,243,199,0.9);
 }
-/* 確定セル */
+/* 決定セル */
 .trellis-table td.confirmed {
-  background-color: rgba(76, 175, 80, 0.2);
+  background-color: rgba(76,175,80,0.2);
 }
-/* セル内の丸 */
-.trellis-table td .circle,
-.trellis-table th .circle {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  top: calc(50% - 14px);
-  left: calc(50% - 14px);
-  z-index: 2;
-  opacity: 0.9;
-}
-.trellis-table td.highlight .circle {
-  background-color: #ffeb3b;
-}
-.trellis-table td.confirmed .circle {
-  background-color: #4caf50;
-}
+/* 値ラベル */
 .trellis-table .value-label {
   position: absolute;
   top: 6px;
@@ -343,7 +359,7 @@ textarea.input {
   color: #112d4e;
 }
 
-/* シンプル表 (LP 用) */
+/* LP 用シンプル表 */
 .simplex-table {
   border-collapse: collapse;
   margin: 16px auto 24px auto;
@@ -369,7 +385,7 @@ textarea.input {
 }
 
 /* ─────────────────────────────────────────
-   ソート／探索 のバー表示
+   ソート／探索 のバー描画
 ───────────────────────────────────────── */
 .bars-wrapper {
   display: flex;
@@ -427,75 +443,99 @@ textarea.input {
 }
 .hash-slot:hover {
   border-color: #4b6cb7;
-  background-color: rgba(75, 108, 183, 0.05);
+  background-color: rgba(75,108,183,0.05);
 }
 .hash-slot.highlight {
-  background-color: rgba(254, 243, 199, 0.9);
+  background-color: rgba(254,243,199,0.9);
   border-color: #ffeb3b;
 }
 .hash-slot.confirmed {
-  background-color: rgba(76, 175, 80, 0.2);
+  background-color: rgba(76,175,80,0.2);
   border-color: #4caf50;
 }
 
 /* ─────────────────────────────────────────
-   スタック
+   スタック可視化
 ───────────────────────────────────────── */
 #stackContainer {
   display: flex;
   flex-direction: column-reverse;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 24px;
 }
 .stack-item {
   background: linear-gradient(90deg, #4b6cb7, #182848);
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 4px;
-  width: 100px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  width: 120px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* ─────────────────────────────────────────
-   キュー
+   キュー可視化
 ───────────────────────────────────────── */
 #queueContainer {
   display: flex;
   gap: 8px;
   margin-bottom: 24px;
+  justify-content: center;
 }
 .queue-item {
   background: linear-gradient(90deg, #4b6cb7, #182848);
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 4px;
-  width: 80px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  min-width: 80px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* ─────────────────────────────────────────
-   ハッシュチェイン
+   ハッシュ(Chaining)可視化
 ───────────────────────────────────────── */
+#hashChainContainer {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
 .hash-chain-slot {
   flex: 1 1 120px;
   background-color: #fff;
   border: 2px solid #cbd5e1;
   border-radius: 6px;
-  padding: 12px;
+  padding: 16px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  margin-bottom: 16px;
 }
-.hash-chain-slot div {
+.hash-chain-slot .chain-index {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #102a43;
+}
+.hash-chain-slot .chain-list {
   font-size: 0.9rem;
-  word-break: break-all;
+  color: #334155;
+  word-break: break-word;
 }
 
 /* ─────────────────────────────────────────
    メディアクエリ (レスポンシブ)
 ───────────────────────────────────────── */
 @media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .navbar-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tabs {
+    flex-direction: column;
+    gap: 12px;
+  }
   .controls {
     flex-direction: column;
     gap: 12px;
@@ -514,14 +554,14 @@ textarea.input {
     height: 50px;
     font-size: 0.85rem;
   }
-  .hash-chain-slot {
-    flex: 1 1 100%;
-  }
   #stackContainer {
     align-items: center;
   }
   #queueContainer {
     flex-wrap: wrap;
-    justify-content: center;
+  }
+  #hashChainContainer {
+    flex-direction: column;
+    gap: 12px;
   }
 }
