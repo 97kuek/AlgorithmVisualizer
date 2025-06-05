@@ -1,5 +1,5 @@
 // -------------------------------------------------
-// 公共関数・ユーティリティ
+// 全体ユーティリティ
 // -------------------------------------------------
 
 /**
@@ -22,7 +22,9 @@ function disableAllStepButtons() {
     fwdPrevBtn, fwdNextBtn, fwdAutoBtn,
     vitPrevBtn, vitNextBtn, vitAutoBtn,
     lpPrevBtn, lpNextBtn, lpAutoBtn,
-    hashPrevBtn, hashNextBtn, hashAutoBtn
+    hashPrevBtn, hashNextBtn, hashAutoBtn,
+    stackPushBtn, stackPopBtn, queueEnqueueBtn, queueDequeueBtn,
+    hashChainInitBtn
   ].forEach(btn => {
     if (btn) btn.disabled = true;
   });
@@ -74,11 +76,26 @@ function updateStepButtons() {
     lpNextBtn.disabled = (currentIndex >= lpSteps.length - 1);
     lpAutoBtn.disabled = false;
   }
-  // Hash
+  // Hash (Open Addressing)
   if (hashControls.style.display === 'block' && hashSteps.length > 0) {
     hashPrevBtn.disabled = (currentIndex <= 0);
     hashNextBtn.disabled = (currentIndex >= hashSteps.length - 1);
     hashAutoBtn.disabled = false;
+  }
+  // Stack
+  if (stackControls.style.display === 'block' && stackSteps.length > 0) {
+    stackPrevBtn.disabled = (currentIndex <= 0);
+    stackNextBtn.disabled = (currentIndex >= stackSteps.length - 1);
+  }
+  // Queue
+  if (queueControls.style.display === 'block' && queueSteps.length > 0) {
+    queuePrevBtn.disabled = (currentIndex <= 0);
+    queueNextBtn.disabled = (currentIndex >= queueSteps.length - 1);
+  }
+  // Hash Chaining
+  if (hashChainControls.style.display === 'block' && hashChainSteps.length > 0) {
+    hashChainPrevBtn.disabled = (currentIndex <= 0);
+    hashChainNextBtn.disabled = (currentIndex >= hashChainSteps.length - 1);
   }
 }
 
@@ -126,23 +143,21 @@ function updateProgress() {
     const current = (currentIndex < 0) ? 0 : (currentIndex + 1);
     hashProgress.textContent = `ステップ ${current} / ${total}`;
   }
-}
-
-/**
- * 自動再生タイマーをクリア（停止）する
- */
-function clearAutoPlay() {
-  if (autoTimer !== null) {
-    clearInterval(autoTimer);
-    autoTimer = null;
+  if (stackControls.style.display === 'block') {
+    const total = stackSteps.length;
+    const current = (currentIndex < 0) ? 0 : (currentIndex + 1);
+    stackProgress.textContent = `ステップ ${current} / ${total}`;
   }
-  // ボタンテキストを「Auto Play」に戻す
-  [
-    editAutoBtn, knapAutoBtn, sortAutoBtn, searchAutoBtn,
-    fwdAutoBtn, vitAutoBtn, lpAutoBtn, hashAutoBtn
-  ].forEach(btn => {
-    if (btn) btn.textContent = 'Auto Play';
-  });
+  if (queueControls.style.display === 'block') {
+    const total = queueSteps.length;
+    const current = (currentIndex < 0) ? 0 : (currentIndex + 1);
+    queueProgress.textContent = `ステップ ${current} / ${total}`;
+  }
+  if (hashChainControls.style.display === 'block') {
+    const total = hashChainSteps.length;
+    const current = (currentIndex < 0) ? 0 : (currentIndex + 1);
+    hashChainProgress.textContent = `ステップ ${current} / ${total}`;
+  }
 }
 
 /**
@@ -220,12 +235,14 @@ function toggleAutoPlay() {
         currentIndex++;
         renderStep();
       } else {
-        clearAutoPlay();
+        clearInterval(autoTimer);
+        autoTimer = null;
         updateStepButtons();
       }
     }, interval);
   } else {
-    clearAutoPlay();
+    clearInterval(autoTimer);
+    autoTimer = null;
     updateStepButtons();
   }
 }
@@ -253,6 +270,9 @@ function onNextStep() {
   else if (viterbiControls.style.display === 'block')stepsArr = viterbiSteps;
   else if (lpControls.style.display === 'block')     stepsArr = lpSteps;
   else if (hashControls.style.display === 'block')   stepsArr = hashSteps;
+  else if (stackControls.style.display === 'block')  stepsArr = stackSteps;
+  else if (queueControls.style.display === 'block')  stepsArr = queueSteps;
+  else if (hashChainControls.style.display === 'block') stepsArr = hashChainSteps;
   else return;
 
   if (currentIndex < stepsArr.length - 1) {
@@ -262,11 +282,11 @@ function onNextStep() {
 }
 
 // -------------------------------------------------
-// 各要素を取得 (ID と紐付け) 
+// DOM要素を取得 (ID と紐付け)
 // -------------------------------------------------
 const algoSelect       = document.getElementById('algoSelect');
 
-// 1) Edit Distance
+// --- Edit Distance ---
 const editControls      = document.getElementById('editControls');
 const editInitBtn       = document.getElementById('editInitBtn');
 const editRandomBtn     = document.getElementById('editRandomBtn');
@@ -281,7 +301,7 @@ const editDelayInput    = document.getElementById('edit_delay');
 const editSpeedSelect   = document.getElementById('editSpeedSelect');
 const editProgress      = document.getElementById('editProgress');
 
-// 2) Knapsack
+// --- 0/1 Knapsack ---
 const knapControls      = document.getElementById('knapControls');
 const knapInitBtn       = document.getElementById('knapInitBtn');
 const knapRandomBtn     = document.getElementById('knapRandomBtn');
@@ -297,7 +317,7 @@ const knapDelayInput    = document.getElementById('knap_delay');
 const knapSpeedSelect   = document.getElementById('knapSpeedSelect');
 const knapProgress      = document.getElementById('knapProgress');
 
-// 3) Sorting
+// --- Sorting ---
 const sortControls      = document.getElementById('sortControls');
 const sortInitBtn       = document.getElementById('sortInitBtn');
 const sortRandomBtn     = document.getElementById('sortRandomBtn');
@@ -312,7 +332,7 @@ const sortDelayInput    = document.getElementById('sort_delay');
 const sortSpeedSelect   = document.getElementById('sortSpeedSelect');
 const sortProgress      = document.getElementById('sortProgress');
 
-// 4) Searching
+// --- Searching ---
 const searchControls     = document.getElementById('searchControls');
 const searchInitBtn      = document.getElementById('searchInitBtn');
 const searchRandomBtn    = document.getElementById('searchRandomBtn');
@@ -328,7 +348,7 @@ const searchAlgoSelect   = document.getElementById('searchAlgoSelect');
 const searchSpeedSelect  = document.getElementById('searchSpeedSelect');
 const searchProgress     = document.getElementById('searchProgress');
 
-// 5) Forward
+// --- Forward (HMM) ---
 const forwardControls    = document.getElementById('forwardControls');
 const fwdStatesInput     = document.getElementById('fwd_states');
 const fwdObsInput        = document.getElementById('fwd_obs');
@@ -345,7 +365,7 @@ const fwdAutoBtn         = document.getElementById('fwdAutoBtn');
 const fwdSpeedSelect     = document.getElementById('fwdSpeedSelect');
 const fwdProgress        = document.getElementById('fwdProgress');
 
-// 6) Viterbi
+// --- Viterbi (HMM) ---
 const viterbiControls    = document.getElementById('viterbiControls');
 const vitStatesInput     = document.getElementById('vit_states');
 const vitObsInput        = document.getElementById('vit_obs');
@@ -362,7 +382,7 @@ const vitAutoBtn         = document.getElementById('vitAutoBtn');
 const vitSpeedSelect     = document.getElementById('vitSpeedSelect');
 const vitProgress        = document.getElementById('vitProgress');
 
-// 7) 線形計画法
+// --- LP (Simplex) ---
 const lpControls         = document.getElementById('lpControls');
 const lp_input           = document.getElementById('lp_input');
 const lpInitBtn          = document.getElementById('lpInitBtn');
@@ -375,7 +395,7 @@ const lpDesc             = document.getElementById('lpDesc');
 const lpSpeedSelect      = document.getElementById('lpSpeedSelect');
 const lpProgress         = document.getElementById('lpProgress');
 
-// 8) ハッシュ法
+// --- Hash (Open Addressing) ---
 const hashControls       = document.getElementById('hashControls');
 const hash_m             = document.getElementById('hash_m');
 const hash_keys          = document.getElementById('hash_keys');
@@ -389,14 +409,53 @@ const hashDesc           = document.getElementById('hashDesc');
 const hashSpeedSelect    = document.getElementById('hashSpeedSelect');
 const hashProgress       = document.getElementById('hashProgress');
 
+// --- Stack ---
+const stackControls      = document.getElementById('stackControls');
+const stackInitBtn       = document.getElementById('stackInitBtn');
+const stackPushBtn       = document.getElementById('stackPushBtn');
+const stackPopBtn        = document.getElementById('stackPopBtn');
+const stackValueInput    = document.getElementById('stack_value');
+const stackContainer     = document.getElementById('stackContainer');
+const stackDesc          = document.getElementById('stackDesc');
+const stackPrevBtn       = document.getElementById('stackPrevBtn');
+const stackNextBtn       = document.getElementById('stackNextBtn');
+const stackProgress      = document.getElementById('stackProgress');
+
+// --- Queue ---
+const queueControls      = document.getElementById('queueControls');
+const queueInitBtn       = document.getElementById('queueInitBtn');
+const queueEnqueueBtn    = document.getElementById('queueEnqueueBtn');
+const queueDequeueBtn    = document.getElementById('queueDequeueBtn');
+const queueValueInput    = document.getElementById('queue_value');
+const queueContainer     = document.getElementById('queueContainer');
+const queueDesc          = document.getElementById('queueDesc');
+const queuePrevBtn       = document.getElementById('queuePrevBtn');
+const queueNextBtn       = document.getElementById('queueNextBtn');
+const queueProgress      = document.getElementById('queueProgress');
+
+// --- Hash Chaining ---
+const hashChainControls  = document.getElementById('hashChainControls');
+const hashChainInitBtn   = document.getElementById('hashChainInitBtn');
+const hashChainSizeInput = document.getElementById('hashChainSize');
+const hashChainKeysInput = document.getElementById('hashChainKeys');
+const hashChainContainer = document.getElementById('hashChainContainer');
+const hashChainDesc      = document.getElementById('hashChainDesc');
+const hashChainPrevBtn   = document.getElementById('hashChainPrevBtn');
+const hashChainNextBtn   = document.getElementById('hashChainNextBtn');
+const hashChainProgress  = document.getElementById('hashChainProgress');
+
 // -------------------------------------------------
 // 各アルゴリズムのステップ配列・現在インデックス・自動再生タイマー
 // -------------------------------------------------
-let editSteps     = [], knapSteps    = [], sortSteps     = [], searchSteps    = [];
-let forwardSteps  = [], viterbiSteps = [], lpSteps       = [], hashSteps      = [];
-let currentIndex  = -1;
-let autoTimer     = null;
-let hashTableState = [];
+let editSteps          = [], knapSteps     = [], sortSteps      = [], searchSteps    = [];
+let forwardSteps       = [], viterbiSteps  = [], lpSteps        = [], hashSteps       = [];
+let stackSteps         = [], queueSteps    = [], hashChainSteps = [];
+let currentIndex       = -1;
+let autoTimer          = null;
+let hashTableState     = [];
+let stackState         = [];
+let queueState         = [];
+let hashChainState     = [];
 
 // -------------------------------------------------
 // アルゴリズム選択時の表示制御
@@ -406,7 +465,8 @@ algoSelect.addEventListener('change', () => {
   // すべて非表示にする
   [
     editControls, knapControls, sortControls, searchControls,
-    forwardControls, viterbiControls, lpControls, hashControls
+    forwardControls, viterbiControls, lpControls, hashControls,
+    stackControls, queueControls, hashChainControls
   ].forEach(div => {
     div.style.display = 'none';
   });
@@ -414,14 +474,17 @@ algoSelect.addEventListener('change', () => {
   disableAllStepButtons();
 
   // 選択されたものだけ表示
-  if (val === 'edit')        editControls.style.display = 'block';
-  else if (val === 'knapsack')knapControls.style.display = 'block';
-  else if (val === 'sorting') sortControls.style.display = 'block';
+  if (val === 'edit')         editControls.style.display = 'block';
+  else if (val === 'knapsack') knapControls.style.display = 'block';
+  else if (val === 'sorting')  sortControls.style.display = 'block';
   else if (val === 'searching')searchControls.style.display = 'block';
-  else if (val === 'forward') forwardControls.style.display = 'block';
-  else if (val === 'viterbi') viterbiControls.style.display = 'block';
-  else if (val === 'lp')      lpControls.style.display = 'block';
-  else if (val === 'hash')    hashControls.style.display = 'block';
+  else if (val === 'forward')  forwardControls.style.display = 'block';
+  else if (val === 'viterbi')  viterbiControls.style.display = 'block';
+  else if (val === 'lp')       lpControls.style.display = 'block';
+  else if (val === 'hash')     hashControls.style.display = 'block';
+  else if (val === 'stack')    stackControls.style.display = 'block';
+  else if (val === 'queue')    queueControls.style.display = 'block';
+  else if (val === 'hashChain')hashChainControls.style.display = 'block';
 });
 
 // =================================================
@@ -443,7 +506,7 @@ function generateEditDistanceSteps(s1, s2) {
   dp[0][0] = 0;
   steps.push({
     type: 'cell', i: 0, j: 0, value: '0',
-    message: `dp[0][0] = 0 に初期化。空文字→空文字なので操作不要です。`
+    message: `dp[0][0] = 0 に初期化：空文字→空文字なので操作不要。`
   });
 
   // 0列目・0行目を初期化
@@ -458,7 +521,7 @@ function generateEditDistanceSteps(s1, s2) {
     dp[0][j] = j;
     steps.push({
       type: 'cell', i: 0, j: j, value: dp[0][j].toString(),
-      message: `dp[0][${j}] = ${j} に設定（挿入コスト）。空文字→「${s2[j-1]}」を挿入し続ける操作が ${j} 回。`
+      message: `dp[0][${j}] = ${j} に設定（挿入コスト）。空文字→「${s2[j-1]}」を挿入する操作が ${j} 回。`
     });
   }
 
@@ -1408,7 +1471,7 @@ fwdInitBtn.addEventListener('click', () => {
     for (let t = 0; t < T; t++) {
       const td = document.createElement('td');
       td.id = `fwd-cell-${t}-${i}`;
-      // ★ インデックス表示用属性をセット
+      // インデックス表示用属性
       td.setAttribute('data-time', t.toString());
       td.setAttribute('data-state', i.toString());
       tr.appendChild(td);
@@ -1626,7 +1689,7 @@ vitInitBtn.addEventListener('click', () => {
     for (let t = 0; t < T; t++) {
       const td = document.createElement('td');
       td.id = `vit-cell-${t}-${i}`;
-      // ★ インデックス表示用属性をセット
+      // インデックス表示用属性
       td.setAttribute('data-time', t.toString());
       td.setAttribute('data-state', i.toString());
       tr.appendChild(td);
@@ -1973,11 +2036,334 @@ function renderHashTable(table, highlightSlot, confirmedSlots) {
   }
 }
 
+// =================================================
+// 9) スタック可視化
+// =================================================
+
+/**
+ * スタック操作のステップを生成
+ * @param {string[]} initialStack 初期スタック要素リスト
+ * @param {Object[]} ops 操作リスト { type: 'push'|'pop', value?:string }
+ * @returns {Array} ステップリスト
+ */
+function generateStackSteps(initialStack, ops) {
+  const stack = initialStack.slice();
+  const steps = [];
+
+  steps.push({
+    type: 'stack',
+    stack: stack.slice(),
+    message: `初期スタック: [${stack.join(', ')}]`
+  });
+
+  for (const op of ops) {
+    if (op.type === 'push') {
+      stack.push(op.value);
+      steps.push({
+        type: 'stack',
+        stack: stack.slice(),
+        highlight: stack.length - 1,
+        message: `push(${op.value}) → スタック: [${stack.join(', ')}]`
+      });
+    } else if (op.type === 'pop') {
+      if (stack.length === 0) {
+        steps.push({
+          type: 'stack',
+          stack: stack.slice(),
+          message: `pop() → スタックは空なので操作無効。`
+        });
+      } else {
+        const val = stack.pop();
+        steps.push({
+          type: 'stack',
+          stack: stack.slice(),
+          message: `pop() → 取り出した要素 = ${val} → スタック: [${stack.join(', ')}]`
+        });
+      }
+    }
+  }
+
+  steps.push({
+    type: 'end',
+    message: `スタック操作終了。最終スタック: [${stack.join(', ')}]`
+  });
+  return steps;
+}
+
+// 「Initialize」ボタン押下時 (Stack 用)
+stackInitBtn.addEventListener('click', () => {
+  const initText = stackValueInput.value.trim();
+  const initialStack = initText ? initText.split(',').map(s => s.trim()) : [];
+  const ops = []; // ここではユーザーが GUI ボタンで順次 push/pop する想定
+  stackState = initialStack.slice();
+  stackSteps = generateStackSteps(stackState, ops);
+  currentIndex = 0;
+
+  // スタックを初期表示
+  while (stackContainer.firstChild) stackContainer.firstChild.remove();
+  renderStack(stackState);
+  stackDesc.textContent = `初期スタック: [${stackState.join(', ')}]`;
+
+  renderStep();
+});
+
+// 「Push」ボタン押下時 (Stack 用)
+stackPushBtn.addEventListener('click', () => {
+  const val = stackValueInput.value.trim();
+  if (!val) {
+    alert('プッシュする値を入力してください。');
+    return;
+  }
+  // 新しいステップを追加
+  stackState.push(val);
+  stackSteps.push({
+    type: 'stack',
+    stack: stackState.slice(),
+    highlight: stackState.length - 1,
+    message: `push(${val}) → スタック: [${stackState.join(', ')}]`
+  });
+  currentIndex = stackSteps.length - 1;
+  renderStep();
+});
+
+// 「Pop」ボタン押下時 (Stack 用)
+stackPopBtn.addEventListener('click', () => {
+  if (stackState.length === 0) {
+    stackSteps.push({
+      type: 'stack',
+      stack: [],
+      message: `pop() → スタックは空なので操作無効。`
+    });
+  } else {
+    const val = stackState.pop();
+    stackSteps.push({
+      type: 'stack',
+      stack: stackState.slice(),
+      message: `pop() → 取り出した要素 = ${val} → スタック: [${stackState.join(', ')}]`
+    });
+  }
+  currentIndex = stackSteps.length - 1;
+  renderStep();
+});
+
+/**
+ * スタックの可視化（HTML 内に要素を表示）
+ * @param {string[]} stack 配列
+ */
+function renderStack(stack) {
+  while (stackContainer.firstChild) stackContainer.firstChild.remove();
+  // 上がトップとして見えるように、配列末尾から表示
+  for (let i = stack.length - 1; i >= 0; i--) {
+    const elem = document.createElement('div');
+    elem.classList.add('stack-item');
+    elem.textContent = stack[i];
+    stackContainer.appendChild(elem);
+  }
+}
+
+// =================================================
+// 10) キュー可視化
+// =================================================
+
+/**
+ * キュー操作のステップを生成
+ * @param {string[]} initialQueue 初期キュー要素リスト
+ * @param {Object[]} ops 操作リスト { type: 'enqueue'|'dequeue', value?:string }
+ * @returns {Array} ステップリスト
+ */
+function generateQueueSteps(initialQueue, ops) {
+  const queue = initialQueue.slice();
+  const steps = [];
+
+  steps.push({
+    type: 'queue',
+    queue: queue.slice(),
+    message: `初期キュー: [${queue.join(', ')}]`
+  });
+
+  for (const op of ops) {
+    if (op.type === 'enqueue') {
+      queue.push(op.value);
+      steps.push({
+        type: 'queue',
+        queue: queue.slice(),
+        highlight: queue.length - 1,
+        message: `enqueue(${op.value}) → キュー: [${queue.join(', ')}]`
+      });
+    } else if (op.type === 'dequeue') {
+      if (queue.length === 0) {
+        steps.push({
+          type: 'queue',
+          queue: queue.slice(),
+          message: `dequeue() → キューは空なので操作無効。`
+        });
+      } else {
+        const val = queue.shift();
+        steps.push({
+          type: 'queue',
+          queue: queue.slice(),
+          message: `dequeue() → 取り出した要素 = ${val} → キュー: [${queue.join(', ')}]`
+        });
+      }
+    }
+  }
+
+  steps.push({
+    type: 'end',
+    message: `キュー操作終了。最終キュー: [${queue.join(', ')}]`
+  });
+  return steps;
+}
+
+// 「Initialize」ボタン押下時 (Queue 用)
+queueInitBtn.addEventListener('click', () => {
+  const initText = queueValueInput.value.trim();
+  const initialQueue = initText ? initText.split(',').map(s => s.trim()) : [];
+  const ops = []; // GUI ボタンで順次操作
+  queueState = initialQueue.slice();
+  queueSteps = generateQueueSteps(queueState, ops);
+  currentIndex = 0;
+
+  // キューを初期表示
+  while (queueContainer.firstChild) queueContainer.firstChild.remove();
+  renderQueue(queueState);
+  queueDesc.textContent = `初期キュー: [${queueState.join(', ')}]`;
+
+  renderStep();
+});
+
+// 「Enqueue」ボタン押下時 (Queue 用)
+queueEnqueueBtn.addEventListener('click', () => {
+  const val = queueValueInput.value.trim();
+  if (!val) {
+    alert('エンキューする値を入力してください。');
+    return;
+  }
+  queueState.push(val);
+  queueSteps.push({
+    type: 'queue',
+    queue: queueState.slice(),
+    highlight: queueState.length - 1,
+    message: `enqueue(${val}) → キュー: [${queueState.join(', ')}]`
+  });
+  currentIndex = queueSteps.length - 1;
+  renderStep();
+});
+
+// 「Dequeue」ボタン押下時 (Queue 用)
+queueDequeueBtn.addEventListener('click', () => {
+  if (queueState.length === 0) {
+    queueSteps.push({
+      type: 'queue',
+      queue: [],
+      message: `dequeue() → キューは空なので操作無効。`
+    });
+  } else {
+    const val = queueState.shift();
+    queueSteps.push({
+      type: 'queue',
+      queue: queueState.slice(),
+      message: `dequeue() → 取り出した要素 = ${val} → キュー: [${queueState.join(', ')}]`
+    });
+  }
+  currentIndex = queueSteps.length - 1;
+  renderStep();
+});
+
+/**
+ * キューの可視化
+ * @param {string[]} queue 配列
+ */
+function renderQueue(queue) {
+  while (queueContainer.firstChild) queueContainer.firstChild.remove();
+  // 前が先頭として、配列先頭から表示
+  queue.forEach((val, idx) => {
+    const elem = document.createElement('div');
+    elem.classList.add('queue-item');
+    elem.textContent = val;
+    queueContainer.appendChild(elem);
+  });
+}
+
+// =================================================
+// 11) ハッシュ法（チェイン法）可視化
+// =================================================
+
+/**
+ * チェイン法ハッシュのステップを生成
+ * @param {number} m テーブルサイズ
+ * @param {number[]} keys キー列
+ * @returns {Object} { steps: Array, finalChains: Array<Array> }
+ */
+function generateHashChainingSteps(m, keys) {
+  // each slot holds an array (chain)
+  const chains = Array.from({ length: m }, () => []);
+  const steps = [];
+
+  for (const k of keys) {
+    const h = k % m;
+    steps.push({
+      type: 'chain_attempt',
+      key: k,
+      idx: h,
+      message: `キー ${k} をハッシュ: h = ${k} mod ${m} = ${h}`
+    });
+    chains[h].push(k);
+    steps.push({
+      type: 'chain_insert',
+      key: k,
+      idx: h,
+      message: `chaining[${h}].push(${k}) → チェイン: [${chains[h].join(', ')}]`
+    });
+  }
+
+  steps.push({
+    type: 'end',
+    message: `すべてのキーを挿入完了`
+  });
+  return { steps, finalChains: chains };
+}
+
+// 「Initialize」ボタン押下時 (Hash Chaining 用)
+hashChainInitBtn.addEventListener('click', () => {
+  const m = parseInt(hashChainSizeInput.value, 10);
+  const keysText = hashChainKeysInput.value.trim();
+  if (isNaN(m) || m < 2) {
+    alert('テーブルサイズ m は 2 以上の整数で入力してください。');
+    return;
+  }
+  if (!keysText) {
+    alert('キー列を入力してください。');
+    return;
+  }
+  const keys = keysText
+    .split(',')
+    .map(s => parseInt(s.trim(), 10))
+    .filter(x => !isNaN(x));
+  clearAutoPlay();
+  const result = generateHashChainingSteps(m, keys);
+  hashChainSteps = result.steps;
+  hashChainState = result.finalChains.map(chain => chain.slice());
+  currentIndex = 0;
+
+  // チェインを初期化して表示
+  while (hashChainContainer.firstChild) hashChainContainer.firstChild.remove();
+  for (let i = 0; i < m; i++) {
+    const slotDiv = document.createElement('div');
+    slotDiv.classList.add('hash-chain-slot');
+    slotDiv.id = `hash-chain-slot-${i}`;
+    slotDiv.textContent = `Slot ${i}: []`;
+    hashChainContainer.appendChild(slotDiv);
+  }
+
+  renderStep();
+});
+
 // -------------------------------------------------
 // renderStep：各アルゴリズムのステップを表示
 // -------------------------------------------------
 function renderStep() {
-  // 1) 全部のハイライトをクリア
+  // 1) ハイライト・描画のクリア
   document.querySelectorAll('.trellis-table td').forEach(td => {
     td.classList.remove('highlight', 'confirmed');
     Array.from(td.children).forEach(child => {
@@ -1993,7 +2379,9 @@ function renderStep() {
     slot.classList.remove('highlight', 'confirmed', 'empty');
     if (slot.textContent === '') slot.classList.add('empty');
   });
-  // simplexTable はステップ中に再描画しない
+  while (simplexTable.firstChild && false) {
+    // シンプル表は再描画しない
+  }
 
   // ■ Edit Distance
   if (editControls.style.display === 'block') {
@@ -2005,7 +2393,6 @@ function renderStep() {
       const cell = document.getElementById(`edit-cell-${step.i}-${step.j}`);
       if (cell) {
         cell.classList.add('highlight');
-        // 値ラベル
         const lbl = document.createElement('div');
         lbl.classList.add('value-label');
         lbl.textContent = step.value;
@@ -2063,7 +2450,6 @@ function renderStep() {
     if (currentIndex >= searchSteps.length) currentIndex = searchSteps.length - 1;
     const step = searchSteps[currentIndex];
     if (step.type === 'idx') {
-      // 前回のハイライトをクリア
       const bars = searchBars.querySelectorAll('.bar');
       bars.forEach(bar => bar.classList.remove('highlight'));
       if (step.idx >= 0 && step.idx < bars.length) {
@@ -2138,7 +2524,7 @@ function renderStep() {
     updateProgress();
   }
 
-  // ■ Hash
+  // ■ Hash (Open Addressing)
   else if (hashControls.style.display === 'block') {
     if (hashSteps.length === 0) return;
     if (currentIndex < 0) currentIndex = 0;
@@ -2160,6 +2546,56 @@ function renderStep() {
       hashDesc.textContent = step.message;
     } else if (step.type === 'end') {
       hashDesc.textContent = step.message;
+    }
+    updateStepButtons();
+    updateProgress();
+  }
+
+  // ■ Stack
+  else if (stackControls.style.display === 'block') {
+    if (stackSteps.length === 0) return;
+    if (currentIndex < 0) currentIndex = 0;
+    if (currentIndex >= stackSteps.length) currentIndex = stackSteps.length - 1;
+    const step = stackSteps[currentIndex];
+    if (step.type === 'stack') {
+      renderStack(step.stack);
+      stackDesc.textContent = step.message;
+    } else if (step.type === 'end') {
+      stackDesc.textContent = step.message;
+    }
+    updateStepButtons();
+    updateProgress();
+  }
+
+  // ■ Queue
+  else if (queueControls.style.display === 'block') {
+    if (queueSteps.length === 0) return;
+    if (currentIndex < 0) currentIndex = 0;
+    if (currentIndex >= queueSteps.length) currentIndex = queueSteps.length - 1;
+    const step = queueSteps[currentIndex];
+    if (step.type === 'queue') {
+      renderQueue(step.queue);
+      queueDesc.textContent = step.message;
+    } else if (step.type === 'end') {
+      queueDesc.textContent = step.message;
+    }
+    updateStepButtons();
+    updateProgress();
+  }
+
+  // ■ Hash Chaining
+  else if (hashChainControls.style.display === 'block') {
+    if (hashChainSteps.length === 0) return;
+    if (currentIndex < 0) currentIndex = 0;
+    if (currentIndex >= hashChainSteps.length) currentIndex = hashChainSteps.length - 1;
+    const step = hashChainSteps[currentIndex];
+    if (step.type === 'chain_attempt') {
+      hashChainDesc.textContent = step.message;
+    } else if (step.type === 'chain_insert') {
+      renderHashChaining(hashChainState);
+      hashChainDesc.textContent = step.message;
+    } else if (step.type === 'end') {
+      hashChainDesc.textContent = step.message;
     }
     updateStepButtons();
     updateProgress();
@@ -2205,10 +2641,69 @@ lpPrevBtn.addEventListener('click', onPrevStep);
 lpNextBtn.addEventListener('click', onNextStep);
 lpAutoBtn.addEventListener('click', toggleAutoPlay);
 
-// 8) Hash
+// 8) Hash (Open Addressing)
 hashPrevBtn.addEventListener('click', onPrevStep);
 hashNextBtn.addEventListener('click', onNextStep);
 hashAutoBtn.addEventListener('click', toggleAutoPlay);
 
+// 9) Stack (ステップは自動で追加されるため Prev/Next にのみバインド)
+stackPrevBtn.addEventListener('click', onPrevStep);
+stackNextBtn.addEventListener('click', onNextStep);
+
+// 10) Queue
+queuePrevBtn.addEventListener('click', onPrevStep);
+queueNextBtn.addEventListener('click', onNextStep);
+
+// 11) Hash Chaining
+hashChainPrevBtn.addEventListener('click', onPrevStep);
+hashChainNextBtn.addEventListener('click', onNextStep);
+
 // 初期状態：何も表示しない
 algoSelect.dispatchEvent(new Event('change'));
+
+// -------------------------------------------------
+// スタック／キュー／ハッシュチェインの描画補助関数
+// -------------------------------------------------
+
+/**
+ * スタックの可視化（HTML 内に要素を表示）
+ * @param {string[]} stack 配列
+ */
+function renderStack(stack) {
+  while (stackContainer.firstChild) stackContainer.firstChild.remove();
+  for (let i = stack.length - 1; i >= 0; i--) {
+    const elem = document.createElement('div');
+    elem.classList.add('stack-item');
+    elem.textContent = stack[i];
+    stackContainer.appendChild(elem);
+  }
+}
+
+/**
+ * キューの可視化
+ * @param {string[]} queue 配列
+ */
+function renderQueue(queue) {
+  while (queueContainer.firstChild) queueContainer.firstChild.remove();
+  queue.forEach((val, idx) => {
+    const elem = document.createElement('div');
+    elem.classList.add('queue-item');
+    elem.textContent = val;
+    queueContainer.appendChild(elem);
+  });
+}
+
+/**
+ * チェイン法ハッシュの可視化
+ * @param {Array<Array>} chains 2次元配列
+ */
+function renderHashChaining(chains) {
+  while (hashChainContainer.firstChild) hashChainContainer.firstChild.remove();
+  chains.forEach((chain, idx) => {
+    const slotDiv = document.createElement('div');
+    slotDiv.classList.add('hash-chain-slot');
+    slotDiv.id = `hash-chain-slot-${idx}`;
+    slotDiv.textContent = `Slot ${idx}: [${chain.join(', ')}]`;
+    hashChainContainer.appendChild(slotDiv);
+  });
+}
