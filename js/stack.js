@@ -40,7 +40,7 @@ function renderStack(state) {
   // 上から表示するため、配列を逆にループ
   for (let i = state.length - 1; i >= 0; i--) {
     const item = document.createElement('div');
-    item.classList.add('stack-item');
+    item.classList.add('stack-item', 'fade-in-up');
     item.textContent = state[i];
     stackContainer.appendChild(item);
   }

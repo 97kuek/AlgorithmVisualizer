@@ -6,7 +6,7 @@
 function renderStep() {
   // 1) 全ハイライト・既存要素をクリア
   document.querySelectorAll('.trellis-table td').forEach(td => {
-    td.classList.remove('highlight', 'confirmed');
+    td.classList.remove('highlight', 'confirmed', 'highlight-anim');
     Array.from(td.children).forEach(child => {
       if (child.classList.contains('circle') || child.classList.contains('value-label')) {
         td.removeChild(child);
@@ -14,7 +14,7 @@ function renderStep() {
     });
   });
   document.querySelectorAll('.bar').forEach(bar => {
-    bar.classList.remove('highlight', 'confirmed');
+    bar.classList.remove('highlight', 'confirmed', 'bounce');
   });
   document.querySelectorAll('.hash-slot').forEach(slot => {
     slot.classList.remove('highlight', 'confirmed', 'empty');
@@ -33,7 +33,7 @@ function renderStep() {
     if (step.type === 'cell') {
       const cell = document.getElementById(`edit-cell-${step.i}-${step.j}`);
       if (cell) {
-        cell.classList.add('highlight');
+        cell.classList.add('highlight', 'highlight-anim');
         const lbl = document.createElement('div');
         lbl.classList.add('value-label');
         lbl.textContent = step.value;
@@ -56,7 +56,7 @@ function renderStep() {
     if (step.type === 'cell') {
       const cell = document.getElementById(`knap-cell-${step.i}-${step.j}`);
       if (cell) {
-        cell.classList.add('highlight');
+        cell.classList.add('highlight', 'highlight-anim');
         const lbl = document.createElement('div');
         lbl.classList.add('value-label');
         lbl.textContent = step.value;
@@ -92,9 +92,9 @@ function renderStep() {
     const step = searchSteps[currentIndex];
     if (step.type === 'idx') {
       const bars = searchBars.querySelectorAll('.bar');
-      bars.forEach(bar => bar.classList.remove('highlight'));
+      bars.forEach(bar => bar.classList.remove('highlight', 'bounce'));
       if (step.idx >= 0 && step.idx < bars.length) {
-        bars[step.idx].classList.add('highlight');
+        bars[step.idx].classList.add('highlight', 'bounce');
       }
       searchDesc.textContent = step.message;
     }
@@ -111,7 +111,7 @@ function renderStep() {
     if (step.type === 'cell') {
       const cell = document.getElementById(`fwd-cell-${step.t}-${step.i}`);
       if (cell) {
-        cell.classList.add('highlight');
+        cell.classList.add('highlight', 'highlight-anim');
         const lbl = document.createElement('div');
         lbl.classList.add('value-label');
         lbl.textContent = step.value;
@@ -136,7 +136,7 @@ function renderStep() {
     } else if (step.type === 'cell') {
       const cell = document.getElementById(`vit-cell-${step.t}-${step.i}`);
       if (cell) {
-        cell.classList.add('highlight');
+        cell.classList.add('highlight', 'highlight-anim');
         const lbl = document.createElement('div');
         lbl.classList.add('value-label');
         lbl.textContent = step.value;
