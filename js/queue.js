@@ -39,7 +39,7 @@ function renderQueue(state) {
   while (queueContainer.firstChild) queueContainer.firstChild.remove();
   state.forEach(val => {
     const item = document.createElement('div');
-    item.classList.add('queue-item');
+    item.classList.add('queue-item', 'fade-in-up');
     item.textContent = val;
     queueContainer.appendChild(item);
   });

@@ -15,7 +15,7 @@ function renderBars(wrapper, array, highlightIndices) {
     bar.classList.add('bar');
     const heightPercent = (val / maxVal) * 100;
     bar.style.height = heightPercent + '%';
-    if (highlightIndices.includes(idx)) bar.classList.add('highlight');
+    if (highlightIndices.includes(idx)) bar.classList.add('highlight', 'bounce');
     wrapper.appendChild(bar);
   });
 }

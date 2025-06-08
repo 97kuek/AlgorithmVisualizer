@@ -19,6 +19,35 @@ body {
   flex-direction: column;
 }
 
+/* アニメーション定義 */
+@keyframes flash-bg {
+  0% { background-color: rgba(255,235,59,0.2); }
+  50% { background-color: rgba(255,235,59,0.9); }
+  100% { background-color: rgba(255,235,59,0.2); }
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.highlight-anim {
+  animation: flash-bg 0.8s ease;
+}
+
+.bounce {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease;
+}
+
 /* ─────────────────────────────────────────
    ナビゲーションバー
 ───────────────────────────────────────── */
@@ -402,7 +431,7 @@ textarea.input {
   flex: 1;
   background: linear-gradient(180deg, #5bc0eb 0%, #0061a8 100%);
   border-radius: 4px 4px 0 0;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition: background 0.2s ease, transform 0.1s ease, height 0.3s ease;
   position: relative;
 }
 .bar:hover {
@@ -410,6 +439,7 @@ textarea.input {
 }
 .bar.highlight {
   background: linear-gradient(180deg, #ffeb3b 0%, #ffeb3b 100%);
+  animation: bounce 0.5s ease;
 }
 .bar.confirmed {
   background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
@@ -471,6 +501,7 @@ textarea.input {
   width: 120px;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 /* ─────────────────────────────────────────
@@ -490,6 +521,7 @@ textarea.input {
   min-width: 80px;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 /* ─────────────────────────────────────────

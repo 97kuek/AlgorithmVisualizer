@@ -79,7 +79,7 @@ function renderHashTable(table, highlightSlot, confirmedSlots) {
       slotElem.textContent = table[i];
     }
     if (i === highlightSlot) {
-      slotElem.classList.add('highlight');
+      slotElem.classList.add('highlight', 'highlight-anim');
     }
     if (confirmedSlots.includes(i)) {
       slotElem.classList.add('confirmed');
